@@ -1,0 +1,21 @@
+name: Daily rebuild on Cloudflare Pages
+
+on:
+  schedule:
+    # 毎日 JST 0:05 に Cloudflare Pages を再ビルドして「あと◯日」バッジを更新
+    - cron: "5 15 * * *"
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cloudflare Pages deploy hook
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK secret is not set" >&2
+            exit 1
+          fi
+          curl -fsS -X POST "$DEPLOY_HOOK"
