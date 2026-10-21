@@ -3,7 +3,7 @@
 import html
 import re
 import shutil
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -24,6 +24,14 @@ CARRIER_COLORS = {
     "LINEMO": ("#d8f5d8", "#2f8a3a"),
     "楽天モバイル": ("#f4dcff", "#8b2bb0"),
 }
+JST = timezone(timedelta(hours=9))
+
+
+def today():
+    """ビルド環境のタイムゾーンに関係なく日本時間の日付を返す。"""
+    return datetime.now(JST).date()
+
+
 DEFAULT_COLOR = ("#e9e3ff", "#5b4bb7")
 CARRIER_SLUGS = {
     "ドコモ": "docomo", "ahamo": "ahamo", "au": "au", "UQ mobile": "uqmobile", "povo": "povo",
@@ -121,7 +129,7 @@ def deadline_badge(article):
     if not end:
         return ""
     try:
-        days = (date.fromisoformat(end) - date.today()).days
+        days = (date.fromisoformat(end) - today()).days
     except ValueError:
         return ""
     if days < 0:
@@ -155,7 +163,7 @@ def page(title, main, description=SITE_DESC, sidebar=""):
 </div>
 <footer class="site-footer"><div class="wrap">
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
-  <p>&copy; {date.today().year} {SITE_NAME}</p>
+  <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
 </body>
 </html>"""
@@ -214,7 +222,7 @@ def main():
         return "\n".join(out)
 
     def sidebar(root):
-        soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - date.today()).days <= 14]
+        soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
         soon.sort(key=lambda a: a["end"])
         items = "".join(
             f'<li><a href="{root}articles/{a["slug"]}.html">{html.escape(a["title"])}</a>'
