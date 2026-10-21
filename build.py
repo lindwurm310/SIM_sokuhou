@@ -259,6 +259,12 @@ def main():
         p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
+    missing = page(f"ページが見つかりません | {SITE_NAME}",
+                   '<h1 class="list-heading">ページが見つかりません</h1>'
+                   '<p>キャンペーンが終了して記事を整理した可能性があります。</p>'
+                   '<p><a href="/index.html">トップページへ戻る</a></p>', sidebar=sidebar("/"))
+    (OUT / "404.html").write_text(render(missing, "/", nav("/")), encoding="utf-8")
+
     print(f"{len(articles)} 本の記事を docs/ に出力しました")
 
 
