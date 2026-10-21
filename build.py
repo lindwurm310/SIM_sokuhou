@@ -116,12 +116,17 @@ def markdown_to_html(md):
 
 
 def thumb(article):
+    """公式サイトの画像があれば使い、読み込めないときはキャリア色のカードを見せる。"""
     bg, fg = CARRIER_COLORS.get(article["carrier"], DEFAULT_COLOR)
     label = html.escape(article.get("thumb", article["carrier"]))
     carrier = html.escape(article["carrier"])
+    img = ""
+    if article.get("image"):
+        img = (f'<img class="thumb-img" src="{html.escape(article["image"])}" alt="" loading="lazy" '
+               f'referrerpolicy="no-referrer" onerror="this.remove()">')
     return (f'<div class="thumb" style="--tbg:{bg};--tfg:{fg}">'
             f'<span class="thumb-carrier">{carrier}</span>'
-            f'<span class="thumb-label">{label}</span></div>')
+            f'<span class="thumb-label">{label}</span>{img}</div>')
 
 
 def deadline_badge(article):
@@ -246,11 +251,14 @@ def main():
         period = f'<p class="period">キャンペーン期間：{html.escape(a["period"])}</p>' if a.get("period") else ""
         source = (f'<p class="source">公式情報：<a href="{html.escape(a["source"])}" target="_blank" rel="noopener">'
                   f'{html.escape(a["source"])}</a></p>') if a.get("source") else ""
+        credit = (f'<p class="credit">画像：{html.escape(a["image_credit"])}</p>'
+                  if a.get("image") and a.get("image_credit") else "")
         main_html = f"""<article class="article">
   <p class="article-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
   <h1 class="article-title">{html.escape(a['title'])}</h1>
   <p class="card-tags">{tags}</p>
   {thumb(a).replace('class="thumb"', 'class="thumb thumb-large"')}
+  {credit}
   {period}
   <div class="article-body">{a['body']}</div>
   {source}

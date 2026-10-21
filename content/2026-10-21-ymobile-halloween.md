@@ -8,7 +8,9 @@ lead: ワイモバイルが11月2日までの「ハロウィンセール」を�
 tags: MNP, 事務手数料無料, ポイント還元, 一括1円
 period: 2026年10月16日〜11月2日 14:59
 end: 2026-11-02
-source: https://www.ymobile.jp/
+image: https://www.ymobile.jp/store/sp/special_sale/images/ogp.webp?20261016
+image_credit: ワイモバイル公式サイト
+source: https://www.ymobile.jp/store/sp/special_sale/
 ---
 ワイモバイルが期間限定の「ハロウィンセール」を始めました。今回のポイントは**事務手数料の無料化**と**SIMのみ契約のポイント増額**の2つ。端末とセットでも、SIMだけでも得をしやすい内容です。
 

@@ -7,6 +7,8 @@ thumb: 乗り換えで1.4万pt
 lead: 楽天モバイルの「三木谷キャンペーン」は、他社から乗り換えると1万4000ポイント、新規契約でも1万3000ポイントがもらえます。専用ページから申し込むことが条件です。
 tags: MNP, SIMのみ, ポイント還元
 period: 終了日未定（公式サイトで要確認）
+image: https://network.mobile.rakuten.co.jp/assets/img/common/ogp.png
+image_credit: 楽天モバイル公式サイト
 source: https://network.mobile.rakuten.co.jp/campaign/
 ---
 端末はそのまま、SIMだけ楽天モバイルに替えたい人に向いているのが「三木谷キャンペーン」です。
