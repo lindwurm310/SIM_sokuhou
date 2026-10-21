@@ -1,0 +1,9 @@
+// Cloudflare Workers（静的アセット）用の設定。name は Cloudflare 側の Worker 名と一致させる。
+{
+  "name": "sim-sokuhou",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./docs",
+    "not_found_handling": "404-page"
+  }
+}
