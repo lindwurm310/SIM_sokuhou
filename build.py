@@ -26,6 +26,15 @@ CARRIER_COLORS = {
 }
 JST = timezone(timedelta(hours=9))
 
+# サイドバーのカテゴリ。記事の tags のどれかが含まれていればそのカテゴリに入る。
+CATEGORIES = [
+    ("mnp", "MNP（乗り換え）", {"MNP"}),
+    ("device", "端末割引・一括1円", {"端末割引", "一括1円", "iPhone", "Android", "返却プログラム"}),
+    ("fee", "事務手数料無料", {"事務手数料無料"}),
+    ("point", "ポイント・残高還元", {"ポイント還元", "残高還元", "キャッシュバック"}),
+    ("simonly", "SIMのみ契約", {"SIMのみ"}),
+]
+
 
 def today():
     """ビルド環境のタイムゾーンに関係なく日本時間の日付を返す。"""
@@ -153,12 +162,16 @@ def page(title, main, description=SITE_DESC, sidebar=""):
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
 <link rel="stylesheet" href="{{root}}static/style.css">
+<script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
 <body>
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="{{root}}index.html"><span class="logo-mark">SIM</span>トク速報</a>
     <p class="tagline">{html.escape(SITE_DESC)}</p>
+    <button class="theme-toggle" type="button" aria-label="ダークモード切り替え" onclick="toggleTheme()">
+      <span class="icon-dark">🌙 ダーク</span><span class="icon-light">☀️ ライト</span>
+    </button>
   </div>
   <nav class="carrier-nav"><div class="wrap">{{nav}}</div></nav>
 </header>
@@ -170,6 +183,14 @@ def page(title, main, description=SITE_DESC, sidebar=""):
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
   <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
+<script>
+function toggleTheme() {{
+  var root = document.documentElement;
+  var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try {{ localStorage.setItem("theme", root.dataset.theme); }} catch (e) {{}}
+}}
+</script>
 </body>
 </html>"""
 
@@ -183,6 +204,7 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "articles").mkdir(parents=True)
     (OUT / "carrier").mkdir()
+    (OUT / "category").mkdir()
     shutil.copytree(ROOT / "static", OUT / "static")
 
     articles = []
@@ -226,6 +248,9 @@ def main():
             out += [card(a, root) for a in group]
         return "\n".join(out)
 
+    def in_category(tags):
+        return [a for a in articles if tags & set(a["tags"])]
+
     def sidebar(root):
         soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
         soon.sort(key=lambda a: a["end"])
@@ -234,7 +259,12 @@ def main():
             f'<span class="side-date">{a["end"][5:].replace("-", "/")}まで</span></li>' for a in soon
         ) or "<li>2週間以内に終わるキャンペーンはありません</li>"
         cs = "".join(f'<li><a href="{root}carrier/{slug_of[c]}.html">{html.escape(c)}</a></li>' for c in carriers)
-        return (f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
+        cats = "".join(
+            f'<li><a href="{root}category/{slug}.html">{html.escape(name)}'
+            f'<span class="count">{len(in_category(tags))}</span></a></li>'
+            for slug, name, tags in CATEGORIES if in_category(tags))
+        return (f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
+                f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""))
@@ -245,6 +275,14 @@ def main():
         p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../"),
                  sidebar=sidebar("../"))
         (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
+
+    for slug, name, tags in CATEGORIES:
+        items = in_category(tags)
+        if not items:
+            continue
+        p = page(f"{name}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(name)}のキャンペーン", "../"),
+                 sidebar=sidebar("../"))
+        (OUT / "category" / f"{slug}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for a in articles:
         tags = "".join(f'<span class="tag">{html.escape(t)}</span>' for t in a["tags"])
