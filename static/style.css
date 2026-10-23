@@ -187,3 +187,30 @@ tbody tr:nth-child(even) { background: var(--row); }
   .tagline { order: 3; width: 100%; }
   .theme-toggle { order: 2; }
 }
+
+/* 開催中キャンペーン一覧 */
+.carrier-nav a.nav-ongoing { background: var(--pink); font-weight: 700; }
+.list-lead { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+.campaign-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.campaign-list li { margin-bottom: 8px; }
+.campaign-row {
+  display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  color: inherit; text-decoration: none; transition: box-shadow .15s;
+}
+.campaign-row:hover { box-shadow: 0 4px 14px var(--shadow); }
+.campaign-carrier {
+  font-size: 13px; font-weight: 700; text-align: center; border-radius: 999px; padding: 2px 8px;
+  background: var(--tbg); color: var(--tfg); filter: var(--thumb-filter);
+}
+.campaign-main { display: flex; flex-direction: column; min-width: 0; }
+.campaign-point { font-weight: 800; color: var(--pink-deep); }
+.campaign-title { font-size: 14px; line-height: 1.5; }
+.campaign-end { white-space: nowrap; }
+.badge-open { background: var(--line); color: var(--muted); }
+@media (max-width: 600px) {
+  .campaign-row { grid-template-columns: auto minmax(0, 1fr); }
+  .campaign-carrier { justify-self: start; }
+  .campaign-end { grid-column: 2; grid-row: 1; justify-self: end; }
+  .campaign-main { grid-column: 1 / -1; }
+}
