@@ -1,9 +1,17 @@
-// Cloudflare Workers（静的アセット）用の設定。name は Cloudflare 側の Worker 名と一致させる。
+// Cloudflare Workers 用の設定。name は Cloudflare 側の Worker 名と一致させる。
+// 静的ページ（docs/）はそのまま配信し、/api/* だけ src/worker.js を通してアクセス数を数える。
 {
   "name": "sim-sokuhou",
+  "main": "src/worker.js",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./docs",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "COUNTER", "class_name": "Counter" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Counter"] }]
 }
