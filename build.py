@@ -231,7 +231,8 @@ def main():
     slug_of = {c: CARRIER_SLUGS.get(c, f"carrier{i}") for i, c in enumerate(carriers)}
 
     def nav(root):
-        links = [f'<a href="{root}index.html">すべて</a>']
+        links = [f'<a href="{root}index.html">すべて</a>',
+                 f'<a class="nav-ongoing" href="{root}campaigns.html">開催中一覧</a>']
         links += [f'<a href="{root}carrier/{slug_of[c]}.html">{html.escape(c)}</a>' for c in carriers]
         return "".join(links)
 
@@ -277,6 +278,41 @@ def main():
         return (f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
                 f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
+
+    def is_ongoing(a):
+        try:
+            return not a.get("end") or date.fromisoformat(a["end"]) >= today()
+        except ValueError:
+            return True
+
+    def campaign_row(a, root):
+        bg, fg = CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)
+        badge = deadline_badge(a) or '<span class="badge badge-open">終了日未定</span>'
+        return (f'<li><a class="campaign-row" href="{root}articles/{a["slug"]}.html">'
+                f'<span class="campaign-carrier" style="--tbg:{bg};--tfg:{fg}">{html.escape(a["carrier"])}</span>'
+                f'<span class="campaign-main"><span class="campaign-point">{html.escape(a.get("thumb", ""))}</span>'
+                f'<span class="campaign-title">{html.escape(a["title"])}</span></span>'
+                f'<span class="campaign-end">{badge}</span></a></li>')
+
+    # 開催中キャンペーン一覧（毎日のビルドで終了したものが自動で外れる）
+    ongoing = [a for a in articles if is_ongoing(a)]
+    dated = sorted((a for a in ongoing if a.get("end")), key=lambda a: a["end"])
+    undated = [a for a in ongoing if not a.get("end")]
+    t = today()
+    sections = [f'<h1 class="list-heading">開催中のキャンペーン一覧</h1>'
+                f'<p class="list-lead">{t.year}年{t.month}月{t.day}日更新。いま申し込める携帯各社のキャンペーン'
+                f'{len(ongoing)}件を、終了が近い順にまとめています。終了したものは毎朝自動で外れます。</p>']
+    for heading, items in (("終了日が決まっているキャンペーン（終了が近い順）", dated),
+                           ("終了日未定のキャンペーン（新着順）", undated)):
+        if items:
+            sections.append(f'<h2 class="date-heading">{heading}</h2>'
+                            f'<ul class="campaign-list">{"".join(campaign_row(a, "") for a in items)}</ul>')
+    if not ongoing:
+        sections.append("<p>現在掲載中のキャンペーンはありません。</p>")
+    p = page(f"開催中の携帯キャンペーン一覧【{t.year}年{t.month}月】 | {SITE_NAME}", "\n".join(sections),
+             f"いま開催中の格安SIM・携帯キャリアのキャンペーン{len(ongoing)}件を終了日順に一覧で紹介。毎朝更新。",
+             sidebar=sidebar(""), path="campaigns.html")
+    (OUT / "campaigns.html").write_text(render(p, "", nav("")), encoding="utf-8")
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
     (OUT / "index.html").write_text(render(index, "", nav("")), encoding="utf-8")
@@ -324,10 +360,11 @@ def main():
     (OUT / "404.html").write_text(render(missing, "/", nav("/")), encoding="utf-8")
 
     # 検索エンジン向けのサイトマップと robots.txt
-    urls = [""] + [f"articles/{a['slug']}.html" for a in articles]
+    urls = ["", "campaigns.html"] + [f"articles/{a['slug']}.html" for a in articles]
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
     latest = {f"articles/{a['slug']}.html": a["date"] for a in articles}
+    latest["campaigns.html"] = today().isoformat()
     entries = "".join(
         f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
         for u in urls)
