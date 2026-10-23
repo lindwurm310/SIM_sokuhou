@@ -10,6 +10,7 @@ ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
 OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
+SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
 
 # キャリアごとのサムネイル色（パステル）
@@ -155,7 +156,7 @@ def deadline_badge(article):
     return f'<span class="badge">〜{end[5:].replace("-", "/")}</span>'
 
 
-def page(title, main, description=SITE_DESC, sidebar=""):
+def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -163,6 +164,14 @@ def page(title, main, description=SITE_DESC, sidebar=""):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
+<link rel="canonical" href="{SITE_URL}{path}">
+<meta property="og:site_name" content="{SITE_NAME}">
+<meta property="og:title" content="{html.escape(title)}">
+<meta property="og:description" content="{html.escape(description)}">
+<meta property="og:url" content="{SITE_URL}{path}">
+<meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
+{f'<meta property="og:image" content="{html.escape(image)}">' if image else ''}
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
@@ -269,13 +278,13 @@ def main():
                 f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
 
-    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""))
+    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
     (OUT / "index.html").write_text(render(index, "", nav("")), encoding="utf-8")
 
     for c in carriers:
         items = [a for a in articles if a["carrier"] == c]
         p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../"),
-                 sidebar=sidebar("../"))
+                 sidebar=sidebar("../"), path=f"carrier/{slug_of[c]}.html")
         (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for slug, name, tags in CATEGORIES:
@@ -283,7 +292,7 @@ def main():
         if not items:
             continue
         p = page(f"{name}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(name)}のキャンペーン", "../"),
-                 sidebar=sidebar("../"))
+                 sidebar=sidebar("../"), path=f"category/{slug}.html")
         (OUT / "category" / f"{slug}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for a in articles:
@@ -304,7 +313,8 @@ def main():
   {source}
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
-        p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"))
+        p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
+                 path=f"articles/{a['slug']}.html", image=a.get("image", ""))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     missing = page(f"ページが見つかりません | {SITE_NAME}",
@@ -312,6 +322,19 @@ def main():
                    '<p>キャンペーンが終了して記事を整理した可能性があります。</p>'
                    '<p><a href="/index.html">トップページへ戻る</a></p>', sidebar=sidebar("/"))
     (OUT / "404.html").write_text(render(missing, "/", nav("/")), encoding="utf-8")
+
+    # 検索エンジン向けのサイトマップと robots.txt
+    urls = [""] + [f"articles/{a['slug']}.html" for a in articles]
+    urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
+    urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
+    latest = {f"articles/{a['slug']}.html": a["date"] for a in articles}
+    entries = "".join(
+        f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
+        for u in urls)
+    (OUT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{entries}</urlset>\n', encoding="utf-8")
+    (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
 
     print(f"{len(articles)} 本の記事を docs/ に出力しました")
 
