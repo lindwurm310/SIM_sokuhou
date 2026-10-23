@@ -1,0 +1,51 @@
+name: Post new articles to X
+
+on:
+  push:
+    branches: [main]
+    paths: ["content/*.md"]
+  workflow_dispatch:
+    inputs:
+      files:
+        description: "投稿する記事（例：content/2026-10-23-xxx.md、複数はスペース区切り）"
+        required: true
+
+concurrency:
+  group: post-to-x
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find new articles
+        id: find
+        env:
+          BEFORE: ${{ github.event.before }}
+          INPUT_FILES: ${{ github.event.inputs.files }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            files="$INPUT_FILES"
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            files=""
+          else
+            # 今回の push で新しく追加された記事だけ（書き直しは投稿しない）
+            files=$(git diff --name-only --diff-filter=A "$BEFORE" "$GITHUB_SHA" -- 'content/*.md' | tr '\n' ' ')
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "対象: ${files:-なし}"
+
+      - name: Post to X
+        if: steps.find.outputs.files != ''
+        env:
+          X_POST_ENABLED: ${{ vars.X_POST_ENABLED }}
+          X_INCLUDE_URL: ${{ vars.X_INCLUDE_URL }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: python3 scripts/post_to_x.py ${{ steps.find.outputs.files }}

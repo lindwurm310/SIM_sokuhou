@@ -10,3 +10,4 @@
 - サイドバーの「カテゴリ」は `tags` から自動で振り分けます（`build.py` の `CATEGORIES`）。使うタグ：MNP / 端末割引 / 一括1円 / iPhone / Android / 返却プログラム / 事務手数料無料 / ポイント還元 / 残高還元 / キャッシュバック / SIMのみ。
 - 右上のボタンでライト／ダークを切り替えられます（初期状態は端末の設定に合わせます）。
 - `end` に終了日（YYYY-MM-DD）を入れると「あと◯日」バッジとサイドバーの「まもなく終了」に自動で反映されます。
+- 新しい記事（`content/*.md` の追加）が `main` に push されると、GitHub Actions（`.github/workflows/post-to-x.yml`）が記事ページの公開を待ってから X に投稿します（`scripts/post_to_x.py`）。X API のキー4つをシークレット `X_API_KEY` / `X_API_SECRET` / `X_ACCESS_TOKEN` / `X_ACCESS_TOKEN_SECRET` に登録し、リポジトリ変数 `X_POST_ENABLED` を `true` にすると実際に投稿します（それまでは投稿文をログに出すだけ）。変数 `X_INCLUDE_URL` を `false` にすると記事URLなしで投稿します（URL入りの投稿は X API の料金が高いため）。投稿文は `python3 scripts/post_to_x.py content/xxx.md` で手元でも確認できます。
