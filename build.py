@@ -265,7 +265,7 @@ def main():
     {thumb(a)}
     <div class="card-body">
       <h2 class="card-title">{html.escape(a['title'])}</h2>
-      <p class="card-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
+      <p class="card-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}<span class="card-carrier">{html.escape(a['carrier'])}</span></p>
       <p class="card-lead">{html.escape(a['lead'])}</p>
       <p class="card-tags">{tags}</p>
     </div>
