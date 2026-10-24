@@ -1,0 +1,20 @@
+[
+ {
+  "id": "rakuten-iphone",
+  "carrier": "楽天モバイル",
+  "name": "iPhone 乗り換え割引",
+  "url": "https://network.mobile.rakuten.co.jp/campaign/iphone-discount/"
+ },
+ {
+  "id": "rakuten-android",
+  "carrier": "楽天モバイル",
+  "name": "Android 乗り換え割引",
+  "url": "https://network.mobile.rakuten.co.jp/campaign/android-discount/"
+ },
+ {
+  "id": "au-onlineshop",
+  "carrier": "au",
+  "name": "オンラインショップのキャンペーン一覧",
+  "url": "https://www.au.com/mobile/onlineshop/campaign/"
+ }
+]

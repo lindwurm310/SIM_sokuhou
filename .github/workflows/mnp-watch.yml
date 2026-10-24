@@ -1,0 +1,55 @@
+name: MNP price watch
+
+on:
+  schedule:
+    # 毎日 JST 8:30 にキャリア公式ページの乗り換え価格を確認し、変化があれば Issue を立てる
+    - cron: "30 23 * * *"
+  workflow_dispatch:
+  # 取得先やスクリプトを変えたときは、Issue を立てずに取得結果をログに出すだけ
+  pull_request:
+    paths:
+      - "watch/**"
+      - ".github/workflows/mnp-watch.yml"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dry run (pull request)
+        if: github.event_name == 'pull_request'
+        run: python3 watch/mnp_watch.py --dry-run
+
+      # 前回の取得結果は Actions のキャッシュに置く（main に毎日コミットして再デプロイが走らないように）
+      - name: Restore last snapshot
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/restore@v4
+        with:
+          path: watch/mnp_snapshot.json
+          key: mnp-snapshot-${{ github.run_id }}
+          restore-keys: mnp-snapshot-
+
+      - name: Check prices
+        if: github.event_name != 'pull_request'
+        run: python3 watch/mnp_watch.py --report report.md
+
+      - name: Save snapshot
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: watch/mnp_snapshot.json
+          key: mnp-snapshot-${{ github.run_id }}
+
+      - name: Open issue
+        if: github.event_name != 'pull_request' && hashFiles('report.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "MNP端末価格の変化 $(TZ=Asia/Tokyo date +%Y-%m-%d)" \
+            --body-file report.md
