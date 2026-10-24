@@ -175,13 +175,23 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
 {f'<meta property="og:image" content="{html.escape(image)}">' if image else ''}
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
 <body data-root="{{root}}" data-slug="{path[9:-5] if path.startswith('articles/') else ''}">
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="{{root}}index.html"><span class="logo-mark">SIM</span>トク速報</a>
+    <a class="logo" href="{{root}}index.html" aria-label="{SITE_NAME} トップへ">
+      <svg class="logo-icon" viewBox="0 0 40 48" aria-hidden="true">
+        <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="logo-stop-a"/><stop offset="1" class="logo-stop-b"/>
+        </linearGradient></defs>
+        <path d="M8 1h20l11 11v27a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8V9a8 8 0 0 1 8-8z" fill="url(#logo-grad)"/>
+        <path class="logo-bolt" d="M23 8 11 27h8l-3 13 13-20h-8z"/>
+      </svg>
+      <span class="logo-text"><span class="logo-sim">SIM</span><span class="logo-toku">トク</span><span class="logo-news">速報</span></span>
+    </a>
     <p class="tagline">{html.escape(SITE_DESC)}</p>
     <button class="theme-toggle" type="button" aria-label="ダークモード切り替え" onclick="toggleTheme()">
       <span class="icon-dark">🌙 ダーク</span><span class="icon-light">☀️ ライト</span>
