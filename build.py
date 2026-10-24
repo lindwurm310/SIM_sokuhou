@@ -11,7 +11,9 @@ ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
 OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
-SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
+SITE_URL = "https://simsoku.com/"
+# 旧URL（workers.dev）や www 付きで開かれたら、このホストの同じページへ転送する
+SITE_HOST = "simsoku.com"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
 # サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
 X_URL = "https://x.com/simsokuho"
@@ -177,6 +179,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{{root}}static/style.css">
+<script>(function(h){{if(/\\.workers\\.dev$/.test(h)||h==="www.{SITE_HOST}")location.replace("https://{SITE_HOST}"+location.pathname+location.search+location.hash);}})(location.hostname);</script>
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
 <body data-root="{{root}}" data-slug="{path[9:-5] if path.startswith('articles/') else ''}">
