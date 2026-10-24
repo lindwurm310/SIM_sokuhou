@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
+PAGES = ROOT / "pages"
 OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
 SITE_URL = "https://simsoku.com/"
@@ -32,6 +33,13 @@ CARRIER_COLORS = {
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
 }
 JST = timezone(timedelta(hours=9))
+
+# キャリアごとの広告（アフィリエイト）リンク。url が空のキャリアには広告を出さない。
+AFFILIATES = json.loads((ROOT / "affiliates.json").read_text(encoding="utf-8"))
+PR_NOTE = '<p class="pr-note">{}にはプロモーションが含まれます</p>'
+# フッターに並べる固定ページ（pages/<slug>.md から生成）
+FOOTER_PAGES = [("about", "運営者情報"), ("privacy", "プライバシーポリシー"),
+                ("ad-policy", "広告掲載について"), ("contact", "お問い合わせ")]
 
 # サイドバーのカテゴリ。記事の tags のどれかが含まれていればそのカテゴリに入る。
 CATEGORIES = [
@@ -146,6 +154,28 @@ def thumb(article):
             f'<span class="thumb-label">{label}</span>{img}</div>')
 
 
+def affiliate_for(carrier, article=None):
+    """広告リンクを返す。記事の affiliate: off で止め、affiliate_url: で上書きできる。"""
+    article = article or {}
+    if article.get("affiliate") == "off":
+        return None
+    entry = AFFILIATES.get(carrier, {})
+    url = article.get("affiliate_url") or entry.get("url", "")
+    if not url.startswith("https://"):
+        return None
+    return {"url": url, "label": entry.get("label") or f"{carrier}の公式サイトで申し込む",
+            "pixel": entry.get("pixel", "") if not article.get("affiliate_url") else ""}
+
+
+def cta_box(aff):
+    """PR ラベル付きの申し込みボタン。ASP の計測用画像（1x1）があれば添える。"""
+    pixel = (f'<img class="cta-pixel" src="{html.escape(aff["pixel"])}" width="1" height="1" alt="">'
+             if aff["pixel"].startswith("https://") else "")
+    return (f'<div class="cta"><span class="pr-label">PR</span>'
+            f'<a class="cta-button" href="{html.escape(aff["url"])}" target="_blank" rel="sponsored noopener">'
+            f'{html.escape(aff["label"])}</a>{pixel}</div>')
+
+
 def deadline_badge(article):
     end = article.get("end")
     if not end:
@@ -208,6 +238,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 </div>
 <footer class="site-footer"><div class="wrap">
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
+  <p class="footer-links">{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}</p>
   <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
 <script>
@@ -273,8 +304,8 @@ def main():
   </a>
 </article>"""
 
-    def list_main(items, heading, root):
-        groups, out = {}, [f'<h1 class="list-heading">{heading}</h1>']
+    def list_main(items, heading, root, intro=""):
+        groups, out = {}, [f'<h1 class="list-heading">{heading}</h1>', intro]
         for a in items:
             groups.setdefault(a["date"], []).append(a)
         for d, group in groups.items():
@@ -319,7 +350,9 @@ def main():
 
     for c in carriers:
         items = [a for a in articles if a["carrier"] == c]
-        p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../"),
+        aff = affiliate_for(c)
+        intro = PR_NOTE.format("このページ") + cta_box(aff) if aff else ""
+        p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../", intro),
                  sidebar=sidebar("../"), path=f"carrier/{slug_of[c]}.html")
         (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
@@ -338,20 +371,31 @@ def main():
                   f'{html.escape(a["source"])}</a></p>') if a.get("source") else ""
         credit = (f'<p class="credit">画像：{html.escape(a["image_credit"])}</p>'
                   if a.get("image") and a.get("image_credit") else "")
+        aff = affiliate_for(a["carrier"], a)
         main_html = f"""<article class="article">
   <p class="article-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
   <h1 class="article-title">{html.escape(a['title'])}</h1>
+  {PR_NOTE.format("本記事") if aff else ""}
   <p class="card-tags">{tags}</p>
   {thumb(a).replace('class="thumb"', 'class="thumb thumb-large"')}
   {credit}
   {period}
   <div class="article-body">{a['body']}</div>
+  {cta_box(aff) if aff else ""}
   {source}
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
         p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
                  path=f"articles/{a['slug']}.html", image=a.get("image", ""))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
+
+    for path in sorted(PAGES.glob("*.md")):
+        meta, body = parse_front_matter(path.read_text(encoding="utf-8"))
+        main_html = (f'<article class="article static-page"><h1 class="article-title">{html.escape(meta["title"])}</h1>'
+                     f'<div class="article-body">{markdown_to_html(body)}</div></article>')
+        p = page(f"{meta['title']} | {SITE_NAME}", main_html, meta.get("description", SITE_DESC),
+                 sidebar(""), path=f"{path.stem}.html")
+        (OUT / f"{path.stem}.html").write_text(render(p, "", nav("")), encoding="utf-8")
 
     missing = page(f"ページが見つかりません | {SITE_NAME}",
                    '<h1 class="list-heading">ページが見つかりません</h1>'
@@ -363,6 +407,7 @@ def main():
     urls = [""] + [f"articles/{a['slug']}.html" for a in articles]
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
+    urls += [f"{path.stem}.html" for path in sorted(PAGES.glob("*.md"))]
     latest = {f"articles/{a['slug']}.html": a["date"] for a in articles}
     entries = "".join(
         f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"

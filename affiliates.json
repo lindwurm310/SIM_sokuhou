@@ -1,0 +1,52 @@
+{
+  "ドコモ": {
+    "url": "",
+    "label": "ドコモの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "ahamo": {
+    "url": "",
+    "label": "ahamoの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "au": {
+    "url": "",
+    "label": "auの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "UQ mobile": {
+    "url": "",
+    "label": "UQ mobileの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "povo": {
+    "url": "",
+    "label": "povoの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "ソフトバンク": {
+    "url": "",
+    "label": "ソフトバンクの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "ワイモバイル": {
+    "url": "",
+    "label": "ワイモバイルの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "LINEMO": {
+    "url": "",
+    "label": "LINEMOの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "楽天モバイル": {
+    "url": "",
+    "label": "楽天モバイルの公式サイトで申し込む",
+    "pixel": ""
+  },
+  "U-NEXT MOBILE": {
+    "url": "",
+    "label": "U-NEXT MOBILEの公式サイトで申し込む",
+    "pixel": ""
+  }
+}
