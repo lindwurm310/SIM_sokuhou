@@ -15,6 +15,8 @@ SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
 # サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
 X_URL = "https://x.com/simsokuho"
+# 記事一覧の見せ方。True で横3列のカード表示、False で従来の日付ごとの縦並びに戻る。
+CARD_GRID = True
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
@@ -272,6 +274,9 @@ def main():
 
     def list_main(items, heading, root):
         groups, out = {}, [f'<h1 class="list-heading">{heading}</h1>']
+        if CARD_GRID:
+            out.append('<div class="card-grid">' + "".join(card(a, root) for a in items) + "</div>")
+            return "\n".join(out)
         for a in items:
             groups.setdefault(a["date"], []).append(a)
         for d, group in groups.items():

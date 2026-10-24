@@ -242,3 +242,25 @@ tbody tr:nth-child(even) { background: var(--row); }
   .tagline { order: 3; width: 100%; }
   .theme-toggle { order: 2; }
 }
+
+/* 記事一覧：横3列のカード表示（build.py の CARD_GRID = True のとき） */
+.card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+.card-grid .card { margin: 0; display: flex; }
+.card-grid .card-link { display: flex; flex-direction: column; gap: 0; padding: 0; width: 100%; }
+.card-grid .thumb { aspect-ratio: 4 / 3; border-radius: var(--radius) var(--radius) 0 0; }
+.card-grid .thumb-label { font-size: 18px; }
+.card-grid .card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
+.card-grid .card-title {
+  font-size: 15px; line-height: 1.45; margin: 0 0 6px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.card-grid .card-meta { font-size: 12px; margin: auto 0 0; gap: 6px; }
+.card-grid .card-lead, .card-grid .card-tags { display: none; }
+@media (max-width: 600px) {
+  .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .card-grid .card-link { padding: 0; }
+  .card-grid .thumb-label { font-size: 15px; }
+  .card-grid .thumb-carrier { font-size: 11px; }
+  .card-grid .card-body { padding: 8px 10px 10px; }
+  .card-grid .card-title { font-size: 14px; }
+}
