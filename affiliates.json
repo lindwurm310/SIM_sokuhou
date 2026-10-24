@@ -48,5 +48,10 @@
     "url": "",
     "label": "U-NEXT MOBILEの公式サイトで申し込む",
     "pixel": ""
+  },
+  "IIJmio": {
+    "url": "",
+    "label": "IIJmioの公式サイトで申し込む",
+    "pixel": ""
   }
 }
