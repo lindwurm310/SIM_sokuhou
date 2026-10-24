@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """content/*.md から docs/ に静的サイトを生成する（外部ライブラリ不要）。"""
 import html
+import json
 import re
 import shutil
 from datetime import date, datetime, timedelta, timezone
@@ -12,6 +13,8 @@ OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
 SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
+# サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
+X_URL = "https://x.com/simsokuho"
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
@@ -175,7 +178,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
-<body>
+<body data-root="{{root}}" data-slug="{path[9:-5] if path.startswith('articles/') else ''}">
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="{{root}}index.html"><span class="logo-mark">SIM</span>トク速報</a>
@@ -202,6 +205,7 @@ function toggleTheme() {{
   try {{ localStorage.setItem("theme", root.dataset.theme); }} catch (e) {{}}
 }}
 </script>
+<script src="{{root}}static/sidebar.js" defer></script>
 </body>
 </html>"""
 
@@ -225,6 +229,13 @@ def main():
         meta["body"] = markdown_to_html(body)
         articles.append(meta)
     articles.sort(key=lambda a: (a["date"], a.get("time", "")), reverse=True)
+
+    # サイドバーのランキング・おすすめ用の記事データ（新しい順）
+    (OUT / "data").mkdir()
+    (OUT / "data" / "articles.json").write_text(json.dumps([
+        {"slug": a["slug"], "title": a["title"], "carrier": a["carrier"], "tags": a["tags"], "end": a.get("end", ""),
+         "bg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[0], "fg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[1]}
+        for a in articles], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     carriers = sorted({a["carrier"] for a in articles},
                       key=lambda c: list(CARRIER_COLORS).index(c) if c in CARRIER_COLORS else 99)
@@ -262,6 +273,18 @@ def main():
     def in_category(tags):
         return [a for a in articles if tags & set(a["tags"])]
 
+    handle = X_URL.rstrip("/").rsplit("/", 1)[-1]
+    x_box = (f'<section class="side-box side-x"><h2>公式X</h2><p>新着キャンペーンをXでもお知らせしています。</p>'
+             f'<a class="x-follow" href="{html.escape(X_URL)}" target="_blank" rel="noopener">'
+             f'<span class="x-logo" aria-hidden="true">𝕏</span>@{html.escape(handle)} をフォロー</a></section>'
+             if X_URL else "")
+    # 中身は static/sidebar.js が埋める
+    extra_boxes = ('<section class="side-box side-peach" id="side-ranking"><h2>累計アクセスランキング</h2>'
+                   '<ol class="side-ranking"><li class="side-empty">読み込み中…</li></ol></section>'
+                   '<section class="side-box side-sky" id="side-recommend"><h2>あなたへのおすすめ</h2>'
+                   '<p class="side-note"></p><ul class="side-picks"><li class="side-empty">読み込み中…</li></ul></section>'
+                   + x_box)
+
     def sidebar(root):
         soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
         soon.sort(key=lambda a: a["end"])
@@ -275,7 +298,7 @@ def main():
             f'<span class="count">{len(in_category(tags))}</span></a></li>'
             for slug, name, tags in CATEGORIES if in_category(tags))
         return (f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
-                f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
+                f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>' + extra_boxes +
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
