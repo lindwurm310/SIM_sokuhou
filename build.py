@@ -279,11 +279,10 @@ def main():
              f'<span class="x-logo" aria-hidden="true">𝕏</span>@{html.escape(handle)} をフォロー</a></section>'
              if X_URL else "")
     # 中身は static/sidebar.js が埋める
-    extra_boxes = ('<section class="side-box side-peach" id="side-ranking"><h2>累計アクセスランキング</h2>'
-                   '<ol class="side-ranking"><li class="side-empty">読み込み中…</li></ol></section>'
-                   '<section class="side-box side-sky" id="side-recommend"><h2>あなたへのおすすめ</h2>'
-                   '<p class="side-note"></p><ul class="side-picks"><li class="side-empty">読み込み中…</li></ul></section>'
-                   + x_box)
+    ranking_box = ('<section class="side-box side-peach" id="side-ranking"><h2>累計アクセスランキング</h2>'
+                   '<ol class="side-ranking"><li class="side-empty">読み込み中…</li></ol></section>')
+    recommend_box = ('<section class="side-box side-sky" id="side-recommend"><h2>あなたへのおすすめ</h2>'
+                     '<p class="side-note"></p><ul class="side-picks"><li class="side-empty">読み込み中…</li></ul></section>')
 
     def sidebar(root):
         soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
@@ -297,8 +296,9 @@ def main():
             f'<li><a href="{root}category/{slug}.html">{html.escape(name)}'
             f'<span class="count">{len(in_category(tags))}</span></a></li>'
             for slug, name, tags in CATEGORIES if in_category(tags))
-        return (f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
-                f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>' + extra_boxes +
+        return (f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
+                + recommend_box + x_box + ranking_box +
+                f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
