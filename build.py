@@ -14,7 +14,7 @@ SITE_NAME = "SIMトク速報"
 SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
 # サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
-X_URL = ""
+X_URL = "https://x.com/simsokuho"
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
