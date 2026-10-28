@@ -31,6 +31,7 @@ CARRIER_COLORS = {
     "LINEMO": ("#d8f5d8", "#2f8a3a"),
     "楽天モバイル": ("#f4dcff", "#8b2bb0"),
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
+    "IIJmio": ("#ffe8d6", "#b4501a"),
 }
 JST = timezone(timedelta(hours=9))
 
@@ -61,6 +62,7 @@ CARRIER_SLUGS = {
     "ドコモ": "docomo", "ahamo": "ahamo", "au": "au", "UQ mobile": "uqmobile", "povo": "povo",
     "ソフトバンク": "softbank", "ワイモバイル": "ymobile", "LINEMO": "linemo", "楽天モバイル": "rakuten",
     "U-NEXT MOBILE": "unext",
+    "IIJmio": "iijmio",
 }
 
 
