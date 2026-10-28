@@ -7,6 +7,8 @@ thumb: AQUOS wish5 約2.2万円引き
 lead: ドコモオンラインショップが10月23日に割引額を改定しました。他社から乗り換えると「AQUOS wish5」が2万1989円引きの1万3981円に。機種変更でもiPhone 17 Pro Max（2TB）が2万2000円引き、Pixel 11 Pro XLが1万1000円引きになっています。
 tags: MNP, 端末割引, Android, iPhone
 period: 終了日未定（公式サイトで要確認）
+image: https://www.docomo.ne.jp/product/sh52f/images/thumb_sh52f.png
+image_credit: NTTドコモ公式サイト
 source: https://onlineshop.docomo.ne.jp/special/5g-welcome-wari
 ---
 ドコモオンラインショップで、乗り換え向けの「5G WELCOME割」と機種変更向けの「オンラインおトク割」の割引額が10月23日に見直されました。

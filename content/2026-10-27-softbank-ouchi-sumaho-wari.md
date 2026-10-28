@@ -7,6 +7,8 @@ thumb: 1年間 月2860円引き
 lead: ソフトバンクがモバイル事業20周年企画「SUPER ARIGATO YEAR」の一環として「おうちスマホ割」を始めました。「テイガク無制限」「ペイトク2」の利用者がSoftBank 光やSoftBank Airを新しく申し込むと、スマホ料金が1年間毎月2860円安くなります。
 tags: 割引
 period: 2026年10月21日〜終了日未定
+image: https://www.softbank.jp/corp/set/data/news/press/sbkk/2026/20261023_01/img/index_pic_01.jpg
+image_credit: ソフトバンク公式サイト
 source: https://www.softbank.jp/corp/news/press/sbkk/2026/20261023_01/
 ---
 ソフトバンクのスマホと自宅のネット回線をまとめると、これまでの「おうち割 光セット」に**さらに月2860円の割引**が上乗せされるキャンペーンです。
