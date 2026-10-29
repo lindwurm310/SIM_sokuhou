@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from build import SITE_URL, parse_front_matter  # noqa: E402
+from build import SITE_URL, affiliate_for, parse_front_matter  # noqa: E402
 
 API_URL = "https://api.x.com/2/tweets"
 MAX_WEIGHT = 280  # X の文字数上限（全角は2、半角は1として数える）
@@ -71,6 +71,9 @@ def compose(meta, slug, include_url=True, measure=weight, limit=MAX_WEIGHT):
     title = meta["title"]
     carrier = meta.get("carrier", "")
     head = f"【{carrier}】" if carrier and not title.startswith(carrier) else ""
+    # 広告リンクのある記事を紹介する投稿は、ステマ規制に合わせて先頭に【PR】を付ける
+    if affiliate_for(carrier, meta):
+        head = "【PR】" + head
     point = f"\n\n▶ {meta['thumb']}" if meta.get("thumb") else ""
     tail = (f"\n\n{url}" if include_url else "") + f"\n{tags}"
 
