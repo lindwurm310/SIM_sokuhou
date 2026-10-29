@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """content/*.md から docs/ に静的サイトを生成する（外部ライブラリ不要）。"""
 import html
+import json
 import re
 import shutil
 from datetime import date, datetime, timedelta, timezone
@@ -8,10 +9,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
+PAGES = ROOT / "pages"
 OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
-SITE_URL = "https://sim-sokuhou.lindwurm310.workers.dev/"
+SITE_URL = "https://simsoku.com/"
+# 旧URL（workers.dev）や www 付きで開かれたら、このホストの同じページへ転送する
+SITE_HOST = "simsoku.com"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
+# サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
+X_URL = "https://x.com/simsokuho"
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
@@ -25,8 +31,16 @@ CARRIER_COLORS = {
     "LINEMO": ("#d8f5d8", "#2f8a3a"),
     "楽天モバイル": ("#f4dcff", "#8b2bb0"),
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
+    "IIJmio": ("#ffe8d6", "#b4501a"),
 }
 JST = timezone(timedelta(hours=9))
+
+# キャリアごとの広告（アフィリエイト）リンク。url が空のキャリアには広告を出さない。
+AFFILIATES = json.loads((ROOT / "affiliates.json").read_text(encoding="utf-8"))
+PR_NOTE = '<p class="pr-note">{}にはプロモーションが含まれます</p>'
+# フッターに並べる固定ページ（pages/<slug>.md から生成）
+FOOTER_PAGES = [("about", "運営者情報"), ("privacy", "プライバシーポリシー"),
+                ("ad-policy", "広告掲載について"), ("contact", "お問い合わせ")]
 
 # サイドバーのカテゴリ。記事の tags のどれかが含まれていればそのカテゴリに入る。
 CATEGORIES = [
@@ -48,6 +62,7 @@ CARRIER_SLUGS = {
     "ドコモ": "docomo", "ahamo": "ahamo", "au": "au", "UQ mobile": "uqmobile", "povo": "povo",
     "ソフトバンク": "softbank", "ワイモバイル": "ymobile", "LINEMO": "linemo", "楽天モバイル": "rakuten",
     "U-NEXT MOBILE": "unext",
+    "IIJmio": "iijmio",
 }
 
 
@@ -141,6 +156,28 @@ def thumb(article):
             f'<span class="thumb-label">{label}</span>{img}</div>')
 
 
+def affiliate_for(carrier, article=None):
+    """広告リンクを返す。記事の affiliate: off で止め、affiliate_url: で上書きできる。"""
+    article = article or {}
+    if article.get("affiliate") == "off":
+        return None
+    entry = AFFILIATES.get(carrier, {})
+    url = article.get("affiliate_url") or entry.get("url", "")
+    if not url.startswith("https://"):
+        return None
+    return {"url": url, "label": entry.get("label") or f"{carrier}の公式サイトで申し込む",
+            "pixel": entry.get("pixel", "") if not article.get("affiliate_url") else ""}
+
+
+def cta_box(aff):
+    """PR ラベル付きの申し込みボタン。ASP の計測用画像（1x1）があれば添える。"""
+    pixel = (f'<img class="cta-pixel" src="{html.escape(aff["pixel"])}" width="1" height="1" alt="">'
+             if aff["pixel"].startswith("https://") else "")
+    return (f'<div class="cta"><span class="pr-label">PR</span>'
+            f'<a class="cta-button" href="{html.escape(aff["url"])}" target="_blank" rel="sponsored noopener">'
+            f'{html.escape(aff["label"])}</a>{pixel}</div>')
+
+
 def deadline_badge(article):
     end = article.get("end")
     if not end:
@@ -173,13 +210,24 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 {f'<meta property="og:image" content="{html.escape(image)}">' if image else ''}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@simsokuho">
+<link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{{root}}static/style.css">
+<script>(function(h){{if(/\\.workers\\.dev$/.test(h)||h==="www.{SITE_HOST}")location.replace("https://{SITE_HOST}"+location.pathname+location.search+location.hash);}})(location.hostname);</script>
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
 </head>
-<body>
+<body data-root="{{root}}" data-slug="{path[9:-5] if path.startswith('articles/') else ''}">
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="{{root}}index.html"><span class="logo-mark">SIM</span>トク速報</a>
+    <a class="logo" href="{{root}}index.html" aria-label="{SITE_NAME} トップへ">
+      <svg class="logo-icon" viewBox="0 0 40 48" aria-hidden="true">
+        <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" class="logo-stop-a"/><stop offset="1" class="logo-stop-b"/>
+        </linearGradient></defs>
+        <path d="M8 1h20l11 11v27a8 8 0 0 1-8 8H8a8 8 0 0 1-8-8V9a8 8 0 0 1 8-8z" fill="url(#logo-grad)"/>
+        <path class="logo-bolt" d="M23 8 11 27h8l-3 13 13-20h-8z"/>
+      </svg>
+      <span class="logo-text"><span class="logo-sim">SIM</span><span class="logo-toku">トク</span><span class="logo-news">速報</span></span>
+    </a>
     <p class="tagline">{html.escape(SITE_DESC)}</p>
     <button class="theme-toggle" type="button" aria-label="ダークモード切り替え" onclick="toggleTheme()">
       <span class="icon-dark">🌙 ダーク</span><span class="icon-light">☀️ ライト</span>
@@ -193,6 +241,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 </div>
 <footer class="site-footer"><div class="wrap">
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
+  <p class="footer-links">{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}</p>
   <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
 <script>
@@ -203,6 +252,7 @@ function toggleTheme() {{
   try {{ localStorage.setItem("theme", root.dataset.theme); }} catch (e) {{}}
 }}
 </script>
+<script src="{{root}}static/sidebar.js" defer></script>
 </body>
 </html>"""
 
@@ -227,6 +277,13 @@ def main():
         articles.append(meta)
     articles.sort(key=lambda a: (a["date"], a.get("time", "")), reverse=True)
 
+    # サイドバーのランキング・おすすめ用の記事データ（新しい順）
+    (OUT / "data").mkdir()
+    (OUT / "data" / "articles.json").write_text(json.dumps([
+        {"slug": a["slug"], "title": a["title"], "carrier": a["carrier"], "tags": a["tags"], "end": a.get("end", ""),
+         "bg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[0], "fg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[1]}
+        for a in articles], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+
     carriers = sorted({a["carrier"] for a in articles},
                       key=lambda c: list(CARRIER_COLORS).index(c) if c in CARRIER_COLORS else 99)
     slug_of = {c: CARRIER_SLUGS.get(c, f"carrier{i}") for i, c in enumerate(carriers)}
@@ -250,8 +307,8 @@ def main():
   </a>
 </article>"""
 
-    def list_main(items, heading, root):
-        groups, out = {}, [f'<h1 class="list-heading">{heading}</h1>']
+    def list_main(items, heading, root, intro=""):
+        groups, out = {}, [f'<h1 class="list-heading">{heading}</h1>', intro]
         for a in items:
             groups.setdefault(a["date"], []).append(a)
         for d, group in groups.items():
@@ -262,6 +319,17 @@ def main():
 
     def in_category(tags):
         return [a for a in articles if tags & set(a["tags"])]
+
+    handle = X_URL.rstrip("/").rsplit("/", 1)[-1]
+    x_box = (f'<section class="side-box side-x"><h2>公式X</h2><p>新着キャンペーンをXでもお知らせしています。</p>'
+             f'<a class="x-follow" href="{html.escape(X_URL)}" target="_blank" rel="noopener">'
+             f'<span class="x-logo" aria-hidden="true">𝕏</span>@{html.escape(handle)} をフォロー</a></section>'
+             if X_URL else "")
+    # 中身は static/sidebar.js が埋める
+    ranking_box = ('<section class="side-box side-peach" id="side-ranking"><h2>累計アクセスランキング</h2>'
+                   '<ol class="side-ranking"><li class="side-empty">読み込み中…</li></ol></section>')
+    recommend_box = ('<section class="side-box side-sky" id="side-recommend"><h2>あなたへのおすすめ</h2>'
+                     '<p class="side-note"></p><ul class="side-picks"><li class="side-empty">読み込み中…</li></ul></section>')
 
     def sidebar(root):
         soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
@@ -275,8 +343,9 @@ def main():
             f'<li><a href="{root}category/{slug}.html">{html.escape(name)}'
             f'<span class="count">{len(in_category(tags))}</span></a></li>'
             for slug, name, tags in CATEGORIES if in_category(tags))
-        return (f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
-                f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
+        return (f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
+                + recommend_box + x_box + ranking_box +
+                f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
@@ -284,7 +353,9 @@ def main():
 
     for c in carriers:
         items = [a for a in articles if a["carrier"] == c]
-        p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../"),
+        aff = affiliate_for(c)
+        intro = PR_NOTE.format("このページ") + cta_box(aff) if aff else ""
+        p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../", intro),
                  sidebar=sidebar("../"), path=f"carrier/{slug_of[c]}.html")
         (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
@@ -303,20 +374,31 @@ def main():
                   f'{html.escape(a["source"])}</a></p>') if a.get("source") else ""
         credit = (f'<p class="credit">画像：{html.escape(a["image_credit"])}</p>'
                   if a.get("image") and a.get("image_credit") else "")
+        aff = affiliate_for(a["carrier"], a)
         main_html = f"""<article class="article">
   <p class="article-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
   <h1 class="article-title">{html.escape(a['title'])}</h1>
+  {PR_NOTE.format("本記事") if aff else ""}
   <p class="card-tags">{tags}</p>
   {thumb(a).replace('class="thumb"', 'class="thumb thumb-large"')}
   {credit}
   {period}
   <div class="article-body">{a['body']}</div>
+  {cta_box(aff) if aff else ""}
   {source}
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
         p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
                  path=f"articles/{a['slug']}.html", image=a.get("image", ""))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
+
+    for path in sorted(PAGES.glob("*.md")):
+        meta, body = parse_front_matter(path.read_text(encoding="utf-8"))
+        main_html = (f'<article class="article static-page"><h1 class="article-title">{html.escape(meta["title"])}</h1>'
+                     f'<div class="article-body">{markdown_to_html(body)}</div></article>')
+        p = page(f"{meta['title']} | {SITE_NAME}", main_html, meta.get("description", SITE_DESC),
+                 sidebar(""), path=f"{path.stem}.html")
+        (OUT / f"{path.stem}.html").write_text(render(p, "", nav("")), encoding="utf-8")
 
     missing = page(f"ページが見つかりません | {SITE_NAME}",
                    '<h1 class="list-heading">ページが見つかりません</h1>'
@@ -328,6 +410,7 @@ def main():
     urls = [""] + [f"articles/{a['slug']}.html" for a in articles]
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
+    urls += [f"{path.stem}.html" for path in sorted(PAGES.glob("*.md"))]
     latest = {f"articles/{a['slug']}.html": a["date"] for a in articles}
     entries = "".join(
         f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
