@@ -1,0 +1,72 @@
+name: Post new articles to X and Bluesky
+
+on:
+  push:
+    branches: [main]
+    paths: ["content/*.md"]
+  workflow_dispatch:
+    inputs:
+      files:
+        description: "投稿する記事（例：content/2026-10-23-xxx.md、複数はスペース区切り）"
+        required: true
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: post-to-x
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find new articles
+        id: find
+        env:
+          BEFORE: ${{ github.event.before }}
+          INPUT_FILES: ${{ github.event.inputs.files }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            files="$INPUT_FILES"
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            files=""
+          else
+            # 今回の push で新しく追加された記事だけ（書き直しは投稿しない）
+            files=$(git diff --name-only --diff-filter=A "$BEFORE" "$GITHUB_SHA" -- 'content/*.md' | tr '\n' ' ')
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "対象: ${files:-なし}"
+
+      - name: Post to X / Bluesky
+        if: steps.find.outputs.files != ''
+        env:
+          # 「Xで投稿する」リンク入りの Issue を作ってスマホに通知する（無料）
+          X_INTENT_OUT: ${{ runner.temp }}/x-intent.md
+          # X API で自動投稿（有料）。変数 X_POST_ENABLED を true にしたときだけ
+          X_POST_ENABLED: ${{ vars.X_POST_ENABLED }}
+          X_INCLUDE_URL: ${{ vars.X_INCLUDE_URL }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          # Bluesky に自動投稿（無料）。変数 BLUESKY_POST_ENABLED を true にしたときだけ
+          BLUESKY_POST_ENABLED: ${{ vars.BLUESKY_POST_ENABLED }}
+          BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: python3 scripts/post_to_x.py ${{ steps.find.outputs.files }}
+
+      - name: Open an issue with "post to X" links
+        if: steps.find.outputs.files != '' && vars.X_POST_ENABLED != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="$RUNNER_TEMP/x-intent.md"
+          [ -s "$body" ] || exit 0
+          gh issue create --repo "$GITHUB_REPOSITORY" --assignee "$GITHUB_REPOSITORY_OWNER" \
+            --title "Xに投稿：新着記事 $(TZ=Asia/Tokyo date +%m/%d)" --body-file "$body"

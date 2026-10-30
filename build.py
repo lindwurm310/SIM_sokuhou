@@ -212,6 +212,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
 {f'<meta property="og:image" content="{html.escape(image)}">' if image else ''}
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@simsokuho">
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>(function(h){{if(/\\.workers\\.dev$/.test(h)||h==="www.{SITE_HOST}")location.replace("https://{SITE_HOST}"+location.pathname+location.search+location.hash);}})(location.hostname);</script>

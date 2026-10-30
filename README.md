@@ -12,5 +12,9 @@
 - サイドバーの X へのリンクは `build.py` の `X_URL` にアカウントのURLを入れると表示されます。
 - 右上のボタンでライト／ダークを切り替えられます（初期状態は端末の設定に合わせます）。
 - `end` に終了日（YYYY-MM-DD）を入れると「あと◯日」バッジとサイドバーの「まもなく終了」に自動で反映されます。
+- 新しい記事（`content/*.md` の追加）が `main` に push されると、GitHub Actions（`.github/workflows/post-to-x.yml`）が記事ページの公開を待ってから次のことをします（`scripts/post_to_x.py`）。投稿文は `python3 scripts/post_to_x.py content/xxx.md` で手元でも確認できます。
+  - **X（無料・半自動）**：「Xで投稿する」リンク入りの Issue を作ります。GitHub アプリの通知から開いてリンクをタップすると、投稿文が入った状態で X が開くので、確かめて投稿し、Issue を閉じます。
+  - **Bluesky（無料・自動）**：変数 `BLUESKY_HANDLE`（例：simtoku.bsky.social）とシークレット `BLUESKY_APP_PASSWORD`（Bluesky の設定で作るアプリパスワード）を登録し、変数 `BLUESKY_POST_ENABLED` を `true` にすると自動で投稿します。
+  - **X（有料・自動）**：X API のキー4つをシークレット `X_API_KEY` / `X_API_SECRET` / `X_ACCESS_TOKEN` / `X_ACCESS_TOKEN_SECRET` に登録し、変数 `X_POST_ENABLED` を `true` にすると自動で投稿します（このとき Issue は作りません）。URL入りは1件0.20ドル、変数 `X_INCLUDE_URL` を `false` にするとURLなしで1件0.015ドルです。
 - 広告（アフィリエイト）：`affiliates.json` のキャリアごとの `url` にASPの広告リンクを入れると、そのキャリアの記事とキャリア別ページに「PR」付きの申し込みボタンと、タイトル下の「プロモーションが含まれます」表記が自動で出ます（`url` が空なら何も出ません）。`label` はボタンの文言、`pixel` はASPの計測用画像（A8.net の `<img src="…">` の URL）です。記事ごとに止めたいときは前付けに `affiliate: off`、別のリンクを使いたいときは `affiliate_url: https://…` を書きます。
 - 固定ページ（運営者情報・プライバシーポリシー・広告掲載について・お問い合わせ）は `pages/*.md` から生成し、フッターにリンクします。
