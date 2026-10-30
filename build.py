@@ -32,6 +32,7 @@ CARRIER_COLORS = {
     "楽天モバイル": ("#f4dcff", "#8b2bb0"),
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
     "IIJmio": ("#ffe8d6", "#b4501a"),
+    "Amazon": ("#e3f4ff", "#1f6f9e"),
 }
 JST = timezone(timedelta(hours=9))
 
@@ -49,6 +50,7 @@ CATEGORIES = [
     ("fee", "事務手数料無料", {"事務手数料無料"}),
     ("point", "ポイント・残高還元", {"ポイント還元", "残高還元", "キャッシュバック"}),
     ("simonly", "SIMのみ契約", {"SIMのみ"}),
+    ("gadget", "AI・ガジェット", {"AI", "ガジェット"}),
 ]
 
 
@@ -63,6 +65,7 @@ CARRIER_SLUGS = {
     "ソフトバンク": "softbank", "ワイモバイル": "ymobile", "LINEMO": "linemo", "楽天モバイル": "rakuten",
     "U-NEXT MOBILE": "unext",
     "IIJmio": "iijmio",
+    "Amazon": "amazon",
 }
 
 
@@ -346,7 +349,7 @@ def main():
         return (f'<section class="side-box side-pink"><h2>まもなく終了</h2><ul>{items}</ul></section>'
                 + recommend_box + x_box + ranking_box +
                 f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
-                f'<section class="side-box side-mint"><h2>キャリア別</h2><ul class="side-carriers">{cs}</ul></section>')
+                f'<section class="side-box side-mint"><h2>キャリア・サービス別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
     (OUT / "index.html").write_text(render(index, "", nav("")), encoding="utf-8")
