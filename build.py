@@ -267,6 +267,20 @@ def render(template, root, nav):
     return template.replace("{root}", root).replace("{nav}", nav)
 
 
+def x_recent_posts(articles, handle, limit=3):
+    """X の埋め込みが読み込めないとき用の、最近の投稿（記事紹介ポスト）の一覧。"""
+    items = []
+    for a in articles[:limit]:
+        head = f"【{a['carrier']}】" if a.get("carrier") and not a["title"].startswith(a["carrier"]) else ""
+        point = f"<br>▶ {html.escape(a['thumb'])}" if a.get("thumb") else ""
+        items.append(
+            f'<li class="x-post"><p class="x-post-head"><span class="x-post-name">{SITE_NAME}</span>'
+            f'<span class="x-post-id">@{html.escape(handle)} · {int(a["date"][5:7])}月{int(a["date"][8:10])}日</span></p>'
+            f'<p class="x-post-text">{html.escape(head + a["title"])}{point}</p>'
+            f'<a class="x-post-link" href="{{root}}articles/{a["slug"]}.html">記事を読む</a></li>')
+    return f'<ul class="x-posts">{"".join(items)}</ul>'
+
+
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -330,7 +344,11 @@ def main():
         return [a for a in articles if tags & set(a["tags"])]
 
     handle = X_URL.rstrip("/").rsplit("/", 1)[-1]
-    x_box = (f'<section class="side-box side-x"><h2>公式X</h2><p>新着キャンペーンをXでもお知らせしています。</p>'
+    # X の投稿タイムライン（X 公式の埋め込み）。static/sidebar.js が近くまでスクロールしたときに読み込み、
+    # 読み込めない環境（広告ブロッカーや、X 側で表示されない場合など）では最近の投稿一覧をそのまま見せる。
+    x_box = (f'<section class="side-box side-x" id="side-x"><h2>公式X</h2>'
+             f'<div class="x-timeline" data-href="https://twitter.com/{html.escape(handle)}">'
+             f'{x_recent_posts(articles, handle)}</div>'
              f'<a class="x-follow" href="{html.escape(X_URL)}" target="_blank" rel="noopener">'
              f'<span class="x-logo" aria-hidden="true">𝕏</span>@{html.escape(handle)} をフォロー</a></section>'
              if X_URL else "")
