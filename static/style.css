@@ -254,6 +254,16 @@ a { color: var(--lavender-deep); }
 :root[data-theme="dark"] .x-follow { background: #fff; color: #0f1419; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .x-follow { background: #fff; color: #0f1419; } }
 .x-logo { font-size: 18px; line-height: 1; }
+.x-timeline { margin: 0 0 12px; }
+.x-timeline.is-embedded .x-posts { display: none; }
+.x-embed { min-height: 120px; }
+.side-box .x-post { padding: 10px 0; }
+.x-post p { margin: 0; }
+.x-post-head { display: flex; flex-wrap: wrap; gap: 0 6px; align-items: baseline; font-size: 13px; }
+.x-post-name { font-weight: 700; }
+.x-post-id { color: var(--muted); font-size: 12px; }
+.x-post-text { margin-top: 4px !important; font-size: 14px; line-height: 1.6; }
+.side-x .x-post-link { display: inline-block; margin-top: 4px; font-size: 12px; color: var(--green); font-weight: 700; }
 
 /* 記事ページ */
 .article { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px clamp(16px, 4vw, 36px); }

@@ -85,3 +85,48 @@
     box.querySelector(".side-note").textContent = personal ? "読んだ記事に近いキャンペーンです" : "開催中の新着キャンペーンです";
   }
 })();
+
+// サイドバーの「公式X」：X 公式の埋め込みタイムラインを、近くまでスクロールしたときに読み込む。
+// 表示できたら最近の投稿一覧（ビルド時に生成）と入れ替え、読み込めなければ一覧をそのまま見せる。
+(function () {
+  var box = document.querySelector("#side-x .x-timeline");
+  if (!box) return;
+  function dark() {
+    var t = document.documentElement.dataset.theme;
+    return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function load() {
+    var holder = document.createElement("div");
+    holder.className = "x-embed";
+    var a = document.createElement("a");
+    a.className = "twitter-timeline";
+    a.href = box.dataset.href + "?ref_src=twsrc%5Etfw";
+    a.setAttribute("data-height", "520");
+    a.setAttribute("data-chrome", "noheader nofooter noborders transparent");
+    a.setAttribute("data-lang", "ja");
+    a.setAttribute("data-dnt", "true");
+    a.setAttribute("data-theme", dark() ? "dark" : "light");
+    a.textContent = "ポストを読み込み中…";
+    holder.appendChild(a);
+    holder.hidden = true;
+    box.appendChild(holder);
+    window.twttr = window.twttr || { _e: [], ready: function (f) { this._e.push(f); } };
+    window.twttr.ready(function (tw) {
+      tw.events.bind("rendered", function (e) {
+        if (!holder.contains(e.target)) return;
+        holder.hidden = false;
+        box.classList.add("is-embedded");
+      });
+    });
+    var s = document.createElement("script");
+    s.src = "https://platform.twitter.com/widgets.js";
+    s.async = true;
+    s.charset = "utf-8";
+    document.body.appendChild(s);
+  }
+  if (!("IntersectionObserver" in window)) { load(); return; }
+  var io = new IntersectionObserver(function (entries) {
+    if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); load(); }
+  }, { rootMargin: "400px" });
+  io.observe(box);
+})();
