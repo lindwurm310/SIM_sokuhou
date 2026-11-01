@@ -214,6 +214,9 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@simsokuho">
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>(function(h){{if(/\\.workers\\.dev$/.test(h)||h==="www.{SITE_HOST}")location.replace("https://{SITE_HOST}"+location.pathname+location.search+location.hash);}})(location.hostname);</script>
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
@@ -291,9 +294,12 @@ def main():
                       key=lambda c: list(CARRIER_COLORS).index(c) if c in CARRIER_COLORS else 99)
     slug_of = {c: CARRIER_SLUGS.get(c, f"carrier{i}") for i, c in enumerate(carriers)}
 
-    def nav(root):
-        links = [f'<a href="{root}index.html">すべて</a>']
-        links += [f'<a href="{root}carrier/{slug_of[c]}.html">{html.escape(c)}</a>' for c in carriers]
+    def nav(root, current=None):
+        # current: "all"（トップ）か、キャリア名（キャリア別ページ・記事ページ）。該当するリンクを色付きにする
+        def cur(key):
+            return ' class="is-current" aria-current="page"' if key == current else ""
+        links = [f'<a href="{root}index.html"{cur("all")}>すべて</a>']
+        links += [f'<a href="{root}carrier/{slug_of[c]}.html"{cur(c)}>{html.escape(c)}</a>' for c in carriers]
         return "".join(links)
 
     def card(a, root):
@@ -352,7 +358,7 @@ def main():
                 f'<section class="side-box side-mint"><h2>キャリア・サービス別</h2><ul class="side-carriers">{cs}</ul></section>')
 
     index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
-    (OUT / "index.html").write_text(render(index, "", nav("")), encoding="utf-8")
+    (OUT / "index.html").write_text(render(index, "", nav("", "all")), encoding="utf-8")
 
     for c in carriers:
         items = [a for a in articles if a["carrier"] == c]
@@ -360,7 +366,7 @@ def main():
         intro = PR_NOTE.format("このページ") + cta_box(aff) if aff else ""
         p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../", intro),
                  sidebar=sidebar("../"), path=f"carrier/{slug_of[c]}.html")
-        (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
+        (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../", c)), encoding="utf-8")
 
     for slug, name, tags in CATEGORIES:
         items = in_category(tags)
