@@ -11,7 +11,7 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write  # カード画像（static/ogp/*.png）をコミットするため
   issues: write
 
 concurrency:
@@ -19,11 +19,59 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  post:
+  # 記事のカード画像（SNSで共有したときに大きく出る画像）がまだなければ作ってコミットする
+  ogp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
+
+      - name: Make card images
+        env:
+          BEFORE: ${{ github.event.before }}
+          INPUT_FILES: ${{ github.event.inputs.files }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            changed="$INPUT_FILES"
+          elif [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            changed=""
+          else
+            changed=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'content/*.md')
+            images=$(git diff --name-only "$BEFORE" "$GITHUB_SHA" -- 'static/ogp/*.png')
+          fi
+          # 追加・書き直しされた記事のうち、同じ push で画像を入れていないものだけ作り直す
+          targets=""
+          for f in $changed; do
+            [ -f "$f" ] || continue
+            png="static/ogp/$(basename "$f" .md).png"
+            if [ ! -f "$png" ] || { [ "${{ github.event_name }}" != "workflow_dispatch" ] && ! echo "$images" | grep -qx "$png"; }; then
+              targets="$targets $f"
+            fi
+          done
+          echo "対象: ${targets:-なし}"
+          [ -n "$targets" ] || exit 0
+          sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk > /dev/null
+          pip install -q pillow
+          python3 scripts/make_ogp.py $targets
+          git add static/ogp
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "記事のカード画像を追加"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+  post:
+    needs: ogp
+    # 画像づくりに失敗しても投稿の準備は続ける（共通のサイト画像になる）
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 直前のジョブがコミットしたカード画像も含めて取り出す
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Find new articles

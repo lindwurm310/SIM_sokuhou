@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from build import SITE_URL, affiliate_for, parse_front_matter  # noqa: E402
+from build import SITE_URL, affiliate_for, ogp_image, parse_front_matter  # noqa: E402
 
 API_URL = "https://api.x.com/2/tweets"
 MAX_WEIGHT = 280  # X の文字数上限（全角は2、半角は1として数える）
@@ -162,11 +162,12 @@ def post_bluesky(text, meta, url):
     if not (handle and password):
         sys.exit("BLUESKY_HANDLE / BLUESKY_APP_PASSWORD が設定されていません")
 
-    def call(method, body, token=None):
-        headers = {"Content-Type": "application/json"}
+    def call(method, body, token=None, content_type="application/json"):
+        headers = {"Content-Type": content_type}
         if token:
             headers["Authorization"] = f"Bearer {token}"
-        req = urllib.request.Request(f"https://bsky.social/xrpc/{method}", data=json.dumps(body).encode(),
+        data = body if isinstance(body, bytes) else json.dumps(body).encode()
+        req = urllib.request.Request(f"https://bsky.social/xrpc/{method}", data=data,
                                      method="POST", headers=headers)
         try:
             with urllib.request.urlopen(req, timeout=30) as res:
@@ -175,15 +176,22 @@ def post_bluesky(text, meta, url):
             sys.exit(f"Bluesky への投稿に失敗しました（HTTP {e.code}）: {e.read().decode(errors='replace')}")
 
     session = call("com.atproto.server.createSession", {"identifier": handle, "password": password})
+    external = {"uri": url, "title": meta["title"], "description": meta.get("lead", "")}
+    # 記事のカード画像をリンクカードのサムネイルにする（取れなければ画像なしで投稿）
+    try:
+        with urllib.request.urlopen(meta["_ogp"], timeout=30) as res:
+            png = res.read()
+        external["thumb"] = call("com.atproto.repo.uploadBlob", png, session["accessJwt"], "image/png")["blob"]
+    except (urllib.error.URLError, TimeoutError, KeyError):
+        pass
     record = {
         "$type": "app.bsky.feed.post",
         "text": text,
         "facets": bluesky_facets(text),
         "langs": ["ja"],
         "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        # 記事のリンクカード（画像なし）
-        "embed": {"$type": "app.bsky.embed.external",
-                  "external": {"uri": url, "title": meta["title"], "description": meta.get("lead", "")}},
+        # 記事のリンクカード（カード画像つき）
+        "embed": {"$type": "app.bsky.embed.external", "external": external},
     }
     res = call("com.atproto.repo.createRecord",
                {"repo": session["did"], "collection": "app.bsky.feed.post", "record": record}, session["accessJwt"])
@@ -203,12 +211,18 @@ def main(paths):
             continue
         meta, _ = parse_front_matter(path.read_text(encoding="utf-8"))
         text, url = compose(meta, path.stem, include_url)
-        print(f"--- {path.name}（{weight(text)}/{MAX_WEIGHT}）\n{text}\n")
-        links.append(f"### {meta['title']}\n\n**[▶ Xで投稿する]({intent_link(text)})**\n\n```\n{text}\n```\n")
+        meta["_ogp"] = image = ogp_image(path.stem)
+        print(f"--- {path.name}（{weight(text)}/{MAX_WEIGHT}）\n{text}\n画像: {image}\n")
+        links.append(f"### {meta['title']}\n\n**[▶ Xで投稿する]({intent_link(text)})**\n\n```\n{text}\n```\n\n"
+                     f"投稿すると記事URLからこの画像がカードで表示されます。"
+                     f"画像を直接添付したいときは[画像を開いて]({image})保存してください。\n\n![カード画像]({image})\n")
         if not (x_api or bluesky or intent_out):
             continue
         if include_url and wait and not wait_until_live(url):
             sys.exit(f"記事ページが公開されないため投稿を中止しました: {url}")
+        # カード画像も公開されてから投稿する（先に投稿すると X が画像なしのカードを覚えてしまう）
+        if wait and not wait_until_live(image):
+            print(f"カード画像が公開されていません（画像なしのカードになるかもしれません）: {image}")
         if i:
             time.sleep(30)  # 連投にならないよう少し間をあける
         if x_api:
@@ -218,6 +232,7 @@ def main(paths):
     if intent_out and links:
         Path(intent_out).write_text(
             "新しい記事が公開されました。リンクを開くと投稿文が入った状態で X が開くので、内容を確かめて投稿してください。"
+            "記事URLから下の画像が大きなカードで自動的に付きます。"
             "投稿が済んだらこの Issue を閉じてください。\n\n" + "\n".join(links), encoding="utf-8")
 
 

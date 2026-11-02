@@ -12,6 +12,7 @@
 - サイドバーの「公式X」は `build.py` の `X_URL` にアカウントのURLを入れると表示されます。X 公式の埋め込みタイムラインで投稿内容を表示し（`static/sidebar.js` がスクロールで近づいたときに読み込む）、広告ブロッカーなどで読み込めない場合は最新記事3本の紹介ポストを一覧で表示します。
 - 右上のボタンでライト／ダークを切り替えられます（初期状態は端末の設定に合わせます）。
 - `end` に終了日（YYYY-MM-DD）を入れると「あと◯日」バッジとサイドバーの「まもなく終了」に自動で反映されます。
+- SNS用のカード画像：記事ごとに 1200×630 の画像（タイトル・キャリア名・見どころ・終了日入り）を `static/ogp/<記事名>.png` に置き、記事ページの `og:image` / `twitter:image` に設定します。X や Bluesky、LINE で記事URLを共有すると大きな画像つきのカードになります。画像は `python3 scripts/make_ogp.py` で作れます（Pillow と日本語フォント Noto Sans CJK が必要）。記事を `main` に push すると、画像がない記事やタイトルを書き直した記事のぶんは GitHub Actions が自動で作ってコミットします。画像がない記事やトップページなどは `static/ogp/default.png` を使います。
 - 新しい記事（`content/*.md` の追加）が `main` に push されると、GitHub Actions（`.github/workflows/post-to-x.yml`）が記事ページの公開を待ってから次のことをします（`scripts/post_to_x.py`）。投稿文は `python3 scripts/post_to_x.py content/xxx.md` で手元でも確認できます。
   - **X（無料・半自動）**：「Xで投稿する」リンク入りの Issue を作ります。GitHub アプリの通知から開いてリンクをタップすると、投稿文が入った状態で X が開くので、確かめて投稿し、Issue を閉じます。
   - **Bluesky（無料・自動）**：変数 `BLUESKY_HANDLE`（例：simtoku.bsky.social）とシークレット `BLUESKY_APP_PASSWORD`（Bluesky の設定で作るアプリパスワード）を登録し、変数 `BLUESKY_POST_ENABLED` を `true` にすると自動で投稿します。

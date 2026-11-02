@@ -199,6 +199,16 @@ def deadline_badge(article):
     return f'<span class="badge">〜{end[5:].replace("-", "/")}</span>'
 
 
+# SNS で共有したときのカード画像（scripts/make_ogp.py が static/ogp/ に作る 1200×630 の PNG）
+DEFAULT_OGP = "static/ogp/default.png"
+
+
+def ogp_image(slug):
+    """記事のカード画像のURL。まだ作っていなければサイト共通の画像にする。"""
+    path = f"static/ogp/{slug}.png"
+    return SITE_URL + (path if (ROOT / path).exists() else DEFAULT_OGP)
+
+
 def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
     return f"""<!doctype html>
 <html lang="ja">
@@ -213,8 +223,12 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta property="og:description" content="{html.escape(description)}">
 <meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
-{f'<meta property="og:image" content="{html.escape(image)}">' if image else ''}
+<meta property="og:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{html.escape(title)}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
 <meta name="twitter:site" content="@simsokuho">
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -419,7 +433,7 @@ def main():
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
         p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
-                 path=f"articles/{a['slug']}.html", image=a.get("image", ""))
+                 path=f"articles/{a['slug']}.html", image=ogp_image(a["slug"]))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for path in sorted(PAGES.glob("*.md")):
