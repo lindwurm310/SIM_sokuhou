@@ -213,7 +213,9 @@ def main(paths):
         text, url = compose(meta, path.stem, include_url)
         meta["_ogp"] = image = ogp_image(path.stem)
         print(f"--- {path.name}（{weight(text)}/{MAX_WEIGHT}）\n{text}\n画像: {image}\n")
-        links.append(f"### {meta['title']}\n\n**[▶ Xで投稿する]({intent_link(text)})**\n\n```\n{text}\n```\n\n"
+        # 「Xで投稿する」リンクは無料なので、X_INCLUDE_URL に関係なく記事URLを入れる（URLがないとカード画像が付かない）
+        intent_text = compose(meta, path.stem, True)[0]
+        links.append(f"### {meta['title']}\n\n**[▶ Xで投稿する]({intent_link(intent_text)})**\n\n```\n{intent_text}\n```\n\n"
                      f"投稿すると記事URLからこの画像がカードで表示されます。"
                      f"画像を直接添付したいときは[画像を開いて]({image})保存してください。\n\n![カード画像]({image})\n")
         if not (x_api or bluesky or intent_out):
