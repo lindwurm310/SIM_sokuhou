@@ -32,6 +32,7 @@ CARRIER_COLORS = {
     "楽天モバイル": ("#f4dcff", "#8b2bb0"),
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
     "IIJmio": ("#ffe8d6", "#b4501a"),
+    "mineo": ("#d6f5ee", "#0f7a66"),
     "Amazon": ("#e3f4ff", "#1f6f9e"),
     "セキュリティ": ("#ffe9e0", "#b23c17"),
 }
@@ -67,6 +68,7 @@ CARRIER_SLUGS = {
     "ソフトバンク": "softbank", "ワイモバイル": "ymobile", "LINEMO": "linemo", "楽天モバイル": "rakuten",
     "U-NEXT MOBILE": "unext",
     "IIJmio": "iijmio",
+    "mineo": "mineo",
     "Amazon": "amazon",
     "セキュリティ": "security",
 }
