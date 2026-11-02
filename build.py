@@ -199,6 +199,25 @@ def deadline_badge(article):
     return f'<span class="badge">〜{end[5:].replace("-", "/")}</span>'
 
 
+# ヘッダー下に流す最新記事の見出し（main() で記事を読み込んだあとに埋める）
+TICKER = ""
+WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+
+
+def ticker(articles, limit=6):
+    """最新記事の見出しを横に流す帯。途切れずにループさせるため同じ列を2回並べる。"""
+    if not articles:
+        return ""
+    items = "".join(
+        f'<a class="ticker-item" href="{{root}}articles/{a["slug"]}.html">'
+        f'<span class="ticker-carrier">{html.escape(a["carrier"])}</span>{html.escape(a["title"])}</a>'
+        for a in articles[:limit])
+    return (f'<div class="ticker" aria-label="最新の記事"><span class="ticker-label">速報</span>'
+            f'<div class="ticker-viewport"><div class="ticker-track">{items}'
+            f'<span class="ticker-dup" aria-hidden="true">{items.replace("<a ", '<a tabindex="-1" ')}</span>'
+            f'</div></div></div>')
+
+
 def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
     return f"""<!doctype html>
 <html lang="ja">
@@ -219,7 +238,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="{{root}}static/style.css">
 <script>(function(h){{if(/\\.workers\\.dev$/.test(h)||h==="www.{SITE_HOST}")location.replace("https://{SITE_HOST}"+location.pathname+location.search+location.hash);}})(location.hostname);</script>
 <script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}}catch(e){{}}</script>
@@ -243,6 +262,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
     </button>
   </div>
   <nav class="carrier-nav"><div class="wrap">{{nav}}</div></nav>
+  {TICKER}
 </header>
 <div class="wrap layout">
   <main>{main}</main>
@@ -307,6 +327,9 @@ def main():
          "bg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[0], "fg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[1]}
         for a in articles], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
+    global TICKER
+    TICKER = ticker(articles)
+
     carriers = sorted({a["carrier"] for a in articles},
                       key=lambda c: list(CARRIER_COLORS).index(c) if c in CARRIER_COLORS else 99)
     slug_of = {c: CARRIER_SLUGS.get(c, f"carrier{i}") for i, c in enumerate(carriers)}
@@ -339,7 +362,10 @@ def main():
             groups.setdefault(a["date"], []).append(a)
         for d, group in groups.items():
             y, m, dd = d.split("-")
-            out.append(f'<h2 class="date-heading">{int(y)}年{int(m)}月{int(dd)}日の記事</h2>')
+            week = WEEKDAYS[date.fromisoformat(d).weekday()]
+            out.append(f'<h2 class="date-heading"><span class="dh-num" aria-hidden="true">{m}.{dd}</span>'
+                       f'<span class="dh-week" aria-hidden="true">{week}</span>'
+                       f'<span class="dh-text">{int(y)}年{int(m)}月{int(dd)}日の記事</span></h2>')
             out += [card(a, root) for a in group]
         return "\n".join(out)
 
