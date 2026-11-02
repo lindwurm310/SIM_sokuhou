@@ -33,6 +33,7 @@ CARRIER_COLORS = {
     "U-NEXT MOBILE": ("#dff1ff", "#1b5e8c"),
     "IIJmio": ("#ffe8d6", "#b4501a"),
     "Amazon": ("#e3f4ff", "#1f6f9e"),
+    "セキュリティ": ("#ffe9e0", "#b23c17"),
 }
 JST = timezone(timedelta(hours=9))
 
@@ -51,6 +52,7 @@ CATEGORIES = [
     ("point", "ポイント・残高還元", {"ポイント還元", "残高還元", "キャッシュバック"}),
     ("simonly", "SIMのみ契約", {"SIMのみ"}),
     ("gadget", "AI・ガジェット", {"AI", "ガジェット"}),
+    ("security", "セキュリティ・注意喚起", {"セキュリティ"}),
 ]
 
 
@@ -66,6 +68,7 @@ CARRIER_SLUGS = {
     "U-NEXT MOBILE": "unext",
     "IIJmio": "iijmio",
     "Amazon": "amazon",
+    "セキュリティ": "security",
 }
 
 
