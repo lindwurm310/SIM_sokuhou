@@ -1,5 +1,6 @@
 ---
 title: UQ mobileのiPhoneでApple Oneに初めて入ると2カ月無料、11月1日開始で月1350円のサービスがお試しできる
+seo_title: UQ mobileのiPhoneでApple Oneが2カ月無料、料金と条件
 date: 2026-11-01
 time: 12:00
 carrier: UQ mobile

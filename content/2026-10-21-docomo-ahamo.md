@@ -1,5 +1,6 @@
 ---
 title: ドコモとahamoで最大4万4000円の端末割引、ahamoはSIMのみ乗り換えで2万ポイント相当
+seo_title: ドコモ・ahamoの端末割引は最大4.4万円、ahamoはSIMのみ乗り換えで2万ポイント
 date: 2026-10-21
 time: 18:00
 carrier: ahamo

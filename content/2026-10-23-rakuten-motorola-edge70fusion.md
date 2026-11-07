@@ -1,5 +1,6 @@
 ---
 title: 楽天モバイルで10月23日発売の「motorola edge 70 fusion」、乗り換えで1万6000ポイント還元され実質4万8900円
+seo_title: motorola edge 70 fusionは楽天モバイルで実質4万8900円、乗り換えで1.6万ポイント
 date: 2026-10-23
 time: 08:00
 carrier: 楽天モバイル

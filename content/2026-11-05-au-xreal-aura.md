@@ -1,5 +1,6 @@
 ---
 title: auが「Android XR」搭載のメガネ型「XREAL AURA」を11月27日発売、26日までの予約で2万9900円相当のPontaポイント還元
+seo_title: au「XREAL AURA」予約で2万9900円相当還元は11月26日まで、価格と発売日
 date: 2026-11-05
 time: 12:10
 carrier: au

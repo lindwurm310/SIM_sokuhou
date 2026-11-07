@@ -1,5 +1,6 @@
 ---
 title: IIJmioの「スマホ大特価セール」が11月30日まで、乗り換えでGalaxy A25 5GやRedmi 12 5Gが4980円に　月額料金の最大3カ月半額も開始
+seo_title: IIJmioスマホ大特価セール11月は30日まで、乗り換えでGalaxy A25 5Gが4980円
 date: 2026-11-06
 time: 08:00
 carrier: IIJmio

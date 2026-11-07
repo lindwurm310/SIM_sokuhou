@@ -1,5 +1,6 @@
 ---
 title: 新しい「iPad mini（A20 Pro）」のキャリア価格、auは16万8800円から・ソフトバンクは18万720円から、11月6日発売
+seo_title: iPad mini（A20 Pro）のキャリア価格比較、au・ソフトバンク・ドコモ
 date: 2026-10-29
 time: 12:00
 carrier: au
