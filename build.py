@@ -20,7 +20,7 @@ SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェック�
 X_URL = "https://x.com/simsokuho"
 # アクセス解析と検索エンジンの所有確認。空のままなら何も出さない。
 # Cloudflare Web Analytics のトークン（ダッシュボード → Web Analytics → サイト追加 → JS スニペットの token の値）
-CF_BEACON_TOKEN = ""
+CF_BEACON_TOKEN = "16f289ad429344ba9e167968f1fd3a9a"
 # Google Search Console の「HTML タグ」で所有確認するときの content の値（DNS で確認するなら空のままでよい）
 GOOGLE_SITE_VERIFICATION = ""
 # Bing Webmaster Tools の所有確認（msvalidate.01 の content の値）
