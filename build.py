@@ -18,6 +18,15 @@ SITE_HOST = "simsoku.com"
 SITE_DESC = "携帯各社の期間限定キャンペーンを毎日チェックしてわかりやすく紹介"
 # サイドバーに出す X（旧Twitter）アカウントのURL。空のままならリンク欄は出さない。
 X_URL = "https://x.com/simsokuho"
+# アクセス解析と検索エンジンの所有確認。空のままなら何も出さない。
+# Cloudflare Web Analytics のトークン（ダッシュボード → Web Analytics → サイト追加 → JS スニペットの token の値）
+CF_BEACON_TOKEN = ""
+# Google Search Console の「HTML タグ」で所有確認するときの content の値（DNS で確認するなら空のままでよい）
+GOOGLE_SITE_VERIFICATION = ""
+# Bing Webmaster Tools の所有確認（msvalidate.01 の content の値）
+BING_SITE_VERIFICATION = ""
+# 開催中キャンペーンのまとめページ
+MATOME_PATH = "campaigns.html"
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
@@ -211,7 +220,64 @@ def ogp_image(slug):
     return SITE_URL + (path if (ROOT / path).exists() else DEFAULT_OGP)
 
 
-def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
+def json_ld(*items):
+    """検索エンジン向けの構造化データ（JSON-LD）。"""
+    return "".join('<script type="application/ld+json">'
+                   + json.dumps(i, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>"
+                   for i in items)
+
+
+def head_extras():
+    out = []
+    if GOOGLE_SITE_VERIFICATION:
+        out.append(f'<meta name="google-site-verification" content="{html.escape(GOOGLE_SITE_VERIFICATION)}">')
+    if BING_SITE_VERIFICATION:
+        out.append(f'<meta name="msvalidate.01" content="{html.escape(BING_SITE_VERIFICATION)}">')
+    return "\n".join(out)
+
+
+def beacon():
+    if not CF_BEACON_TOKEN:
+        return ""
+    return ("<script defer src=\"https://static.cloudflareinsights.com/beacon.min.js\" "
+            f"data-cf-beacon='{{\"token\": \"{html.escape(CF_BEACON_TOKEN)}\"}}'></script>")
+
+
+def jp_date(d):
+    """2026-11-30 → 11月30日"""
+    return f"{int(d[5:7])}月{int(d[8:10])}日"
+
+
+def seo_title(a):
+    """検索結果に出るタイトル。前付けの seo_title: で上書きでき、なければ「いつまで」が分かるよう終了日を足す。"""
+    if a.get("seo_title"):
+        return a["seo_title"]
+    t = a["title"]
+    if a.get("end") and "まで" not in t and "終了" not in t:
+        t += f"【{jp_date(a['end'])}まで】"
+    return t
+
+
+def is_open(a, on=None):
+    """開催中か。終了日がなければ公開から45日以内を開催中とみなす。"""
+    on = on or today()
+    if a.get("end"):
+        try:
+            return date.fromisoformat(a["end"]) >= on
+        except ValueError:
+            return False
+    return (on - date.fromisoformat(a["date"])).days <= 45
+
+
+def iso_time(a):
+    return f"{a['date']}T{a.get('time') or '00:00'}:00+09:00"
+
+
+PUBLISHER = {"@type": "Organization", "name": SITE_NAME, "url": SITE_URL,
+             "logo": {"@type": "ImageObject", "url": SITE_URL + "static/favicon.svg"}}
+
+
+def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head=""):
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -232,6 +298,9 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
 <meta name="twitter:site" content="@simsokuho">
+<link rel="alternate" type="application/rss+xml" title="{SITE_NAME}" href="{SITE_URL}feed.xml">
+{head_extras()}
+{head}
 <link rel="icon" href="{{root}}static/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -266,7 +335,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image=""):
 </div>
 <footer class="site-footer"><div class="wrap">
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
-  <p class="footer-links">{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}</p>
+  <p class="footer-links">{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}<a href="{SITE_URL}feed.xml">RSS</a></p>
   <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
 <script>
@@ -278,6 +347,7 @@ function toggleTheme() {{
 }}
 </script>
 <script src="{{root}}static/sidebar.js" defer></script>
+{beacon()}
 </body>
 </html>"""
 
@@ -331,7 +401,8 @@ def main():
         # current: "all"（トップ）か、キャリア名（キャリア別ページ・記事ページ）。該当するリンクを色付きにする
         def cur(key):
             return ' class="is-current" aria-current="page"' if key == current else ""
-        links = [f'<a href="{root}index.html"{cur("all")}>すべて</a>']
+        links = [f'<a href="{root}index.html"{cur("all")}>すべて</a>',
+                 f'<a href="{root}{MATOME_PATH}"{cur("matome")}>開催中まとめ</a>']
         links += [f'<a href="{root}carrier/{slug_of[c]}.html"{cur(c)}>{html.escape(c)}</a>' for c in carriers]
         return "".join(links)
 
@@ -361,6 +432,40 @@ def main():
 
     def in_category(tags):
         return [a for a in articles if tags & set(a["tags"])]
+
+    def related(a, limit=4):
+        """同じキャリアの記事と、タグが重なる他社の記事。開催中のものを優先する。"""
+        others = [b for b in articles if b["slug"] != a["slug"]]
+        same = sorted((b for b in others if b["carrier"] == a["carrier"]),
+                      key=lambda b: (not is_open(b), articles.index(b)))[:limit]
+        shown = {b["slug"] for b in same}
+        mine = set(a["tags"])
+        near = sorted((b for b in others if b["slug"] not in shown and b["carrier"] != a["carrier"]
+                       and mine & set(b["tags"])),
+                      key=lambda b: (not is_open(b), -len(mine & set(b["tags"])), articles.index(b)))[:limit]
+        return same, near
+
+    def mini_list(items, root):
+        rows = []
+        for b in items:
+            bg, fg = CARRIER_COLORS.get(b["carrier"], DEFAULT_COLOR)
+            rows.append(f'<li><a href="{root}articles/{b["slug"]}.html">'
+                        f'<span class="mini-carrier" style="--tbg:{bg};--tfg:{fg}">{html.escape(b["carrier"])}</span>'
+                        f'<span class="mini-title">{html.escape(b["title"])}</span>{deadline_badge(b)}</a></li>')
+        return f'<ul class="mini-list">{"".join(rows)}</ul>'
+
+    def related_html(a):
+        same, near = related(a)
+        out = []
+        if same:
+            out.append(f'<section class="related"><h2>{html.escape(a["carrier"])}のほかの記事</h2>{mini_list(same, "../")}'
+                       f'<p class="related-more"><a href="../carrier/{slug_of[a["carrier"]]}.html">'
+                       f'{html.escape(a["carrier"])}の記事をすべて見る →</a></p></section>')
+        if near:
+            out.append(f'<section class="related"><h2>あわせて読みたい</h2>{mini_list(near, "../")}</section>')
+        out.append(f'<p class="related-more related-matome"><a href="../{MATOME_PATH}">'
+                   f'いま開催中のキャンペーンまとめを見る →</a></p>')
+        return "\n".join(out)
 
     handle = X_URL.rstrip("/").rsplit("/", 1)[-1]
     # X の投稿タイムライン（X 公式の埋め込み）。static/sidebar.js が近くまでスクロールしたときに読み込み、
@@ -394,7 +499,10 @@ def main():
                 f'<section class="side-box side-lavender"><h2>カテゴリ</h2><ul class="side-categories">{cats}</ul></section>'
                 f'<section class="side-box side-mint"><h2>キャリア・サービス別</h2><ul class="side-carriers">{cs}</ul></section>')
 
-    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="")
+    site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE_URL,
+               "description": SITE_DESC, "inLanguage": "ja", "publisher": PUBLISHER}
+    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="",
+                 head=json_ld(site_ld))
     (OUT / "index.html").write_text(render(index, "", nav("", "all")), encoding="utf-8")
 
     for c in carriers:
@@ -432,10 +540,25 @@ def main():
   <div class="article-body">{a['body']}</div>
   {cta_box(aff) if aff else ""}
   {source}
+  {related_html(a)}
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
-        p = page(f"{a['title']} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
-                 path=f"articles/{a['slug']}.html", image=ogp_image(a["slug"]))
+        url = f"{SITE_URL}articles/{a['slug']}.html"
+        article_ld = {
+            "@context": "https://schema.org", "@type": "NewsArticle",
+            "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+            "headline": a["title"], "description": a["lead"],
+            "image": [ogp_image(a["slug"])] + ([a["image"]] if a.get("image") else []),
+            "datePublished": iso_time(a), "dateModified": a.get("updated") and f"{a['updated']}T00:00:00+09:00" or iso_time(a),
+            "author": {"@type": "Organization", "name": f"{SITE_NAME}編集部", "url": SITE_URL + "about.html"},
+            "publisher": PUBLISHER, "keywords": ", ".join([a["carrier"]] + a["tags"]), "inLanguage": "ja",
+        }
+        crumbs = [("トップ", SITE_URL), (a["carrier"], f"{SITE_URL}carrier/{slug_of[a['carrier']]}.html"),
+                  (a["title"], url)]
+        crumb_ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]}
+        p = page(f"{seo_title(a)} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
+                 path=f"articles/{a['slug']}.html", image=ogp_image(a["slug"]), head=json_ld(article_ld, crumb_ld))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for path in sorted(PAGES.glob("*.md")):
@@ -446,6 +569,63 @@ def main():
                  sidebar(""), path=f"{path.stem}.html")
         (OUT / f"{path.stem}.html").write_text(render(p, "", nav("")), encoding="utf-8")
 
+    # 開催中キャンペーンのまとめ（毎日の再ビルドで中身と日付が更新される）
+    now = today()
+    open_items = [a for a in articles if is_open(a, now)]
+    soon = sorted((a for a in open_items if a.get("end") and (date.fromisoformat(a["end"]) - now).days <= 7),
+                  key=lambda a: a["end"])
+
+    def matome_table(items):
+        rows = "".join(
+            f'<tr><td><a href="articles/{a["slug"]}.html">{html.escape(a["title"])}</a></td>'
+            f'<td class="nowrap">{jp_date(a["end"]) + "まで" if a.get("end") else "未定"}</td></tr>'
+            for a in items)
+        return ('<div class="table-wrap"><table class="matome-table"><thead><tr><th>キャンペーン</th><th>終了日</th>'
+                f'</tr></thead><tbody>{rows}</tbody></table></div>')
+
+    sections = []
+    if soon:
+        sections.append(f'<h2 id="soon">まもなく終了（7日以内）</h2>{matome_table(soon)}')
+    toc = []
+    for c in carriers:
+        items = [a for a in open_items if a["carrier"] == c]
+        if not items:
+            continue
+        items.sort(key=lambda a: (a.get("end") or "9999", a["date"]))
+        toc.append(f'<a href="#c-{slug_of[c]}">{html.escape(c)}（{len(items)}）</a>')
+        sections.append(f'<h2 id="c-{slug_of[c]}">{html.escape(c)}のキャンペーン</h2>{matome_table(items)}'
+                        f'<p class="related-more"><a href="carrier/{slug_of[c]}.html">{html.escape(c)}の記事一覧 →</a></p>')
+    matome_title = f"【{now.year}年{now.month}月】開催中のSIM・スマホのキャンペーンまとめ"
+    matome_desc = (f"{now.month}月{now.day}日時点で開催中の携帯各社のキャンペーン{len(open_items)}件を、"
+                   "キャリア別・終了日順にまとめました。乗り換え（MNP）特典、端末割引、ポイント還元を毎日更新しています。")
+    matome_main = (f'<article class="article matome"><h1 class="article-title">{matome_title}</h1>'
+                   f'<p class="article-meta"><time datetime="{now.isoformat()}">{now.year}/{now.month}/{now.day} 更新</time></p>'
+                   f'<p>{html.escape(matome_desc)}終了日が近い順に並べています。条件は必ず各社の公式サイトで確認してください。</p>'
+                   f'<nav class="matome-toc">{"".join(toc)}</nav>'
+                   f'<div class="article-body">{"".join(sections)}</div></article>')
+    matome_ld = {"@context": "https://schema.org", "@type": "ItemList", "name": matome_title,
+                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": f"{SITE_URL}articles/{a['slug']}.html"}
+                                     for i, a in enumerate(open_items)]}
+    p = page(f"{matome_title} | {SITE_NAME}", matome_main, matome_desc, sidebar(""), path=MATOME_PATH,
+             head=json_ld(matome_ld))
+    (OUT / MATOME_PATH).write_text(render(p, "", nav("", "matome")), encoding="utf-8")
+
+    # RSS フィード（新しい20件）
+    def rfc822(a):
+        return datetime.fromisoformat(iso_time(a)).strftime("%a, %d %b %Y %H:%M:%S +0900")
+    feed_items = "".join(
+        f"<item><title>{html.escape(a['title'])}</title><link>{SITE_URL}articles/{a['slug']}.html</link>"
+        f"<guid isPermaLink=\"true\">{SITE_URL}articles/{a['slug']}.html</guid><pubDate>{rfc822(a)}</pubDate>"
+        f"<category>{html.escape(a['carrier'])}</category><description>{html.escape(a['lead'])}</description>"
+        f"<enclosure url=\"{ogp_image(a['slug'])}\" type=\"image/png\" length=\"0\"/></item>"
+        for a in articles[:20])
+    (OUT / "feed.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>'
+        f"<title>{SITE_NAME}</title><link>{SITE_URL}</link><description>{html.escape(SITE_DESC)}</description>"
+        f'<language>ja</language><atom:link href="{SITE_URL}feed.xml" rel="self" type="application/rss+xml"/>'
+        + (f"<lastBuildDate>{rfc822(articles[0])}</lastBuildDate>" if articles else "")
+        + f"{feed_items}</channel></rss>\n", encoding="utf-8")
+
     missing = page(f"ページが見つかりません | {SITE_NAME}",
                    '<h1 class="list-heading">ページが見つかりません</h1>'
                    '<p>キャンペーンが終了して記事を整理した可能性があります。</p>'
@@ -453,11 +633,12 @@ def main():
     (OUT / "404.html").write_text(render(missing, "/", nav("/")), encoding="utf-8")
 
     # 検索エンジン向けのサイトマップと robots.txt
-    urls = [""] + [f"articles/{a['slug']}.html" for a in articles]
+    urls = ["", MATOME_PATH] + [f"articles/{a['slug']}.html" for a in articles]
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
     urls += [f"{path.stem}.html" for path in sorted(PAGES.glob("*.md"))]
-    latest = {f"articles/{a['slug']}.html": a["date"] for a in articles}
+    latest = {f"articles/{a['slug']}.html": a.get("updated") or a["date"] for a in articles}
+    latest[MATOME_PATH] = now.isoformat()
     entries = "".join(
         f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
         for u in urls)

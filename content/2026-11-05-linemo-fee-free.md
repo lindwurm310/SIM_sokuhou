@@ -1,5 +1,6 @@
 ---
 title: LINEMOの契約事務手数料3850円が0円に、乗り換えなら最大1万2000円相当のPayPayポイントと併用OK、11月8日まで
+seo_title: LINEMOの事務手数料0円は11月8日まで、乗り換えで最大1.2万円相当と併用OK
 date: 2026-11-05
 time: 08:00
 carrier: LINEMO

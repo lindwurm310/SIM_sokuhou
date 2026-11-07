@@ -1,5 +1,6 @@
 ---
 title: povoに乗り換えて1年分のデータを買うと半額がau PAY残高で戻る「本気割」、360GBなら1万3200円相当
+seo_title: povo「本気割」はデータ代の半額をau PAY残高で還元、360GBで1.3万円相当
 date: 2026-10-22
 time: 08:00
 carrier: povo

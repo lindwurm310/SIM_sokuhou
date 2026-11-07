@@ -1,0 +1,31 @@
+name: Remind campaigns ending tomorrow
+
+on:
+  schedule:
+    # 毎日 JST 18:00 に、翌日終わるキャンペーンの「明日まで」投稿文を用意する
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compose reminder posts
+        env:
+          X_INTENT_OUT: ${{ runner.temp }}/x-remind.md
+        run: python3 scripts/ending_soon.py 1
+
+      - name: Open an issue with "post to X" links
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="$RUNNER_TEMP/x-remind.md"
+          [ -s "$body" ] || exit 0
+          gh issue create --repo "$GITHUB_REPOSITORY" --assignee "$GITHUB_REPOSITORY_OWNER" \
+            --title "Xに投稿：明日終了のキャンペーン $(TZ=Asia/Tokyo date +%m/%d)" --body-file "$body"

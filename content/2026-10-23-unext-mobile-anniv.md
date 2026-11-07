@@ -1,5 +1,6 @@
 ---
 title: U-NEXT MOBILEが1周年キャンペーン開始、新規契約で6カ月にわたり計1800ポイント
+seo_title: U-NEXT MOBILE 1周年キャンペーン、新規契約で計1800ポイント
 date: 2026-10-23
 time: 07:00
 carrier: U-NEXT MOBILE

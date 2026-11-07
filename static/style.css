@@ -411,3 +411,24 @@ th { background: var(--green-pale); }
   main > .card:first-of-type .card-lead { display: none; }
   main > .card:first-of-type .thumb-label { font-size: 22px; }
 }
+
+/* 記事下の関連記事 */
+.related { margin-top: 32px; }
+.related h2 { font-size: 17px; font-weight: 900; margin: 0 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--green); }
+.mini-list { list-style: none; margin: 0; padding: 0; }
+.mini-list li { border-bottom: 1px solid var(--line); }
+.mini-list a { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 10px 0; color: var(--text); text-decoration: none; }
+.mini-list a:hover .mini-title { text-decoration: underline; }
+.mini-carrier { font-size: 11px; font-weight: 700; padding: 1px 6px; background: var(--tbg); color: var(--tfg); filter: var(--thumb-filter); }
+.mini-title { flex: 1 1 100%; font-size: 15px; font-weight: 700; line-height: 1.5; }
+.related-more { margin: 8px 0 0; font-size: 14px; text-align: right; }
+.related-more a { color: var(--green); font-weight: 700; }
+.related-matome { margin-top: 24px; text-align: left; padding: 12px 14px; background: var(--yellow-pale); border-left: 4px solid var(--yellow); }
+
+/* 開催中キャンペーンまとめ */
+.matome-toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 8px; }
+.matome-toc a { font-size: 13px; padding: 4px 10px; background: var(--chip); color: var(--text); text-decoration: none; }
+.matome-toc a:hover { background: var(--green-pale); }
+.matome-table { min-width: 0; }
+.matome-table td:first-child a { font-weight: 700; }
+.matome-table .nowrap { white-space: nowrap; width: 1%; }
