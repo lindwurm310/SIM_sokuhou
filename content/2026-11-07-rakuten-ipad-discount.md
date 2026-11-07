@@ -8,6 +8,7 @@ lead: 楽天モバイルが11月6日からiPad（A16）、iPad mini（A20 Pro）
 tags: MNP, 端末割引, ポイント還元
 period: 2026年11月6日 8:00〜（終了日未定）
 source: https://network.mobile.rakuten.co.jp/campaign/ipad-discount/
+x_intro: 楽天モバイルでiPadが2万円引きになってるよ。
 image: https://network.mobile.rakuten.co.jp/assets/img/campaign/ipad-discount/ogp.png
 image_credit: 楽天モバイル公式サイト
 ---

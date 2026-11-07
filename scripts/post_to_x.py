@@ -71,6 +71,10 @@ def compose(meta, slug, include_url=True, measure=weight, limit=MAX_WEIGHT):
     title = meta["title"]
     carrier = meta.get("carrier", "")
     head = f"【{carrier}】" if carrier and not title.startswith(carrier) else ""
+    # 文頭に親しみのある一言（例：「楽天モバイルでiPadが2万円引きだよ。」）を付ける。
+    # 記事の x_intro: に書く。なければキャリア名から作る。
+    intro = meta.get("x_intro", "").strip() or (f"{carrier}のおトクな情報だよ。" if carrier else "おトクな情報だよ。")
+    head = f"{intro}\n{head}"
     # 広告リンクのある記事を紹介する投稿は、ステマ規制に合わせて先頭に【PR】を付ける
     if affiliate_for(carrier, meta):
         head = "【PR】" + head
