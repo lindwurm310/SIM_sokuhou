@@ -50,6 +50,9 @@ JST = timezone(timedelta(hours=9))
 # キャリアごとの広告（アフィリエイト）リンク。url が空のキャリアには広告を出さない。
 AFFILIATES = json.loads((ROOT / "affiliates.json").read_text(encoding="utf-8"))
 PR_NOTE = '<p class="pr-note">{}にはプロモーションが含まれます</p>'
+# A8.net のリンクマネージャー（提携中の広告主の公式サイトへのリンクを自動で広告リンクに置き換える）。
+# 空にすると読み込まない。有効な間は、どの記事のリンクも広告になりうるので全記事に PR 表記を出す。
+A8_LINKMGR_ID = "byVfdFBbOCiMYslBWooB"
 # フッターに並べる固定ページ（pages/<slug>.md から生成）
 FOOTER_PAGES = [("about", "運営者情報"), ("privacy", "プライバシーポリシー"),
                 ("ad-policy", "広告掲載について"), ("contact", "お問い合わせ")]
@@ -243,6 +246,13 @@ def beacon():
             f"data-cf-beacon='{{\"token\": \"{html.escape(CF_BEACON_TOKEN)}\"}}'></script>")
 
 
+def a8_linkmgr():
+    if not A8_LINKMGR_ID:
+        return ""
+    return ('<script src="https://statics.8me.jp/a8link/a8linkmgr.js"></script>\n'
+            f'<script>a8linkmgr({{"config_id": "{html.escape(A8_LINKMGR_ID)}"}});</script>')
+
+
 def jp_date(d):
     """2026-11-30 → 11月30日"""
     return f"{int(d[5:7])}月{int(d[8:10])}日"
@@ -348,6 +358,7 @@ function toggleTheme() {{
 </script>
 <script src="{{root}}static/sidebar.js" defer></script>
 {beacon()}
+{a8_linkmgr()}
 </body>
 </html>"""
 
@@ -532,7 +543,7 @@ def main():
         main_html = f"""<article class="article">
   <p class="article-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
   <h1 class="article-title">{html.escape(a['title'])}</h1>
-  {PR_NOTE.format("本記事") if aff else ""}
+  {PR_NOTE.format("本記事") if aff or A8_LINKMGR_ID else ""}
   <p class="card-tags">{tags}</p>
   {thumb(a).replace('class="thumb"', 'class="thumb thumb-large"')}
   {credit}
