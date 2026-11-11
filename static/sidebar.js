@@ -14,10 +14,18 @@
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
   }
+  // 記事一覧と同じサムネイル（公式画像、読み込めなければキャリア色のカード）を小さく出す
+  function thumb(a) {
+    var img = a.image ? '<img class="thumb-img" src="' + esc(a.image) + '" alt="" loading="lazy" ' +
+      'referrerpolicy="no-referrer" onerror="this.remove()">' : "";
+    return '<div class="thumb thumb-mini" style="--tbg:' + a.bg + ";--tfg:" + a.fg + '">' +
+      '<span class="thumb-carrier">' + esc(a.carrier) + '</span><span class="thumb-label">' +
+      esc(a.thumb || a.carrier) + "</span>" + img + "</div>";
+  }
   function item(a, extra) {
-    return '<li><a href="' + root + "articles/" + a.slug + '.html">' +
-      '<span class="side-carrier" style="--tbg:' + a.bg + ";--tfg:" + a.fg + '">' + esc(a.carrier) + "</span>" +
-      esc(a.title) + "</a>" + (extra || "") + "</li>";
+    return '<li class="side-item"><a href="' + root + "articles/" + a.slug + '.html">' + thumb(a) +
+      '<span class="side-text"><span class="side-carrier" style="--tbg:' + a.bg + ";--tfg:" + a.fg + '">' +
+      esc(a.carrier) + "</span>" + esc(a.title) + (extra || "") + "</span></a></li>";
   }
 
   // 記事ページなら閲覧履歴に残し、同じ記事は1日1回だけアクセス数に数える
