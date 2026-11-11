@@ -53,6 +53,8 @@ PR_NOTE = '<p class="pr-note">{}にはプロモーションが含まれます</p
 # A8.net のリンクマネージャー（提携中の広告主の公式サイトへのリンクを自動で広告リンクに置き換える）。
 # 空にすると読み込まない。有効な間は、どの記事のリンクも広告になりうるので全記事に PR 表記を出す。
 A8_LINKMGR_ID = "byVfdFBbOCiMYslBWooB"
+# Google AdSense のサイト運営者ID（ca-pub-…）。空にすると読み込まず ads.txt も出さない。
+ADSENSE_CLIENT = "ca-pub-2086077839254292"
 # フッターに並べる固定ページ（pages/<slug>.md から生成）
 FOOTER_PAGES = [("about", "運営者情報"), ("privacy", "プライバシーポリシー"),
                 ("ad-policy", "広告掲載について"), ("contact", "お問い合わせ")]
@@ -248,6 +250,13 @@ def beacon():
             f"data-cf-beacon='{{\"token\": \"{html.escape(CF_BEACON_TOKEN)}\"}}'></script>")
 
 
+def adsense():
+    if not ADSENSE_CLIENT:
+        return ""
+    return ('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
+            f'?client={html.escape(ADSENSE_CLIENT)}" crossorigin="anonymous"></script>')
+
+
 def a8_linkmgr():
     if not A8_LINKMGR_ID:
         return ""
@@ -295,6 +304,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{adsense()}
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
 <link rel="canonical" href="{SITE_URL}{path}">
@@ -660,6 +670,9 @@ def main():
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{entries}</urlset>\n', encoding="utf-8")
+    if ADSENSE_CLIENT:
+        pub = ADSENSE_CLIENT.removeprefix("ca-")
+        (OUT / "ads.txt").write_text(f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
 
     print(f"{len(articles)} 本の記事を docs/ に出力しました")
