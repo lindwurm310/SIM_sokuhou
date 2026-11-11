@@ -432,3 +432,28 @@ th { background: var(--green-pale); }
 .matome-table { min-width: 0; }
 .matome-table td:first-child a { font-weight: 700; }
 .matome-table .nowrap { white-space: nowrap; width: 1%; }
+
+/* 小さい記事リスト（サイドバー・関連記事）のサムネイル */
+.thumb-mini { flex: none; width: 104px; padding: 4px; border-radius: 4px; }
+.thumb-mini .thumb-carrier { display: none; }
+.thumb-mini .thumb-label { font-size: 11px; line-height: 1.3; margin: 0; }
+.side-item a, .mini-list a { display: flex; align-items: flex-start; gap: 10px; }
+.side-item a:hover .thumb, .mini-list a:hover .thumb { opacity: .85; }
+.side-text, .mini-text { flex: 1; min-width: 0; font-size: 14px; line-height: 1.5; }
+.side-text .side-carrier { margin-bottom: 2px; }
+.side-text .side-date, .side-text .side-views { margin-top: 2px; }
+.side-ranking li.side-item { padding-left: 0; }
+.side-ranking li.side-item::before {
+  left: -4px; top: 6px; width: 24px; height: 24px; z-index: 3; font-size: 13px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--muted); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.side-ranking li.side-item:nth-child(1)::before { background: var(--orange); color: #fff; }
+.side-ranking li.side-item:nth-child(2)::before { background: var(--blue); color: #fff; }
+.side-ranking li.side-item:nth-child(3)::before { background: var(--green); color: #fff; }
+.mini-list a { flex-wrap: nowrap; padding: 12px 0; }
+.mini-list .thumb-mini { width: 128px; }
+.mini-text { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+@media (max-width: 600px) {
+  .mini-list .thumb-mini { width: 112px; }
+  .mini-title { font-size: 14px; }
+}

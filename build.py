@@ -162,8 +162,9 @@ def markdown_to_html(md):
     return "\n".join(out)
 
 
-def thumb(article):
-    """公式サイトの画像があれば使い、読み込めないときはキャリア色のカードを見せる。"""
+def thumb(article, extra=""):
+    """公式サイトの画像があれば使い、読み込めないときはキャリア色のカードを見せる。
+    extra にクラス名（thumb-mini など）を渡すと、小さい一覧用の見た目にできる。"""
     bg, fg = CARRIER_COLORS.get(article["carrier"], DEFAULT_COLOR)
     label = html.escape(article.get("thumb", article["carrier"]))
     carrier = html.escape(article["carrier"])
@@ -171,7 +172,8 @@ def thumb(article):
     if article.get("image"):
         img = (f'<img class="thumb-img" src="{html.escape(article["image"])}" alt="" loading="lazy" '
                f'referrerpolicy="no-referrer" onerror="this.remove()">')
-    return (f'<div class="thumb" style="--tbg:{bg};--tfg:{fg}">'
+    cls = f"thumb {extra}".strip()
+    return (f'<div class="{cls}" style="--tbg:{bg};--tfg:{fg}">'
             f'<span class="thumb-carrier">{carrier}</span>'
             f'<span class="thumb-label">{label}</span>{img}</div>')
 
@@ -401,6 +403,7 @@ def main():
     (OUT / "data").mkdir()
     (OUT / "data" / "articles.json").write_text(json.dumps([
         {"slug": a["slug"], "title": a["title"], "carrier": a["carrier"], "tags": a["tags"], "end": a.get("end", ""),
+         "thumb": a.get("thumb", a["carrier"]), "image": a.get("image", ""),
          "bg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[0], "fg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[1]}
         for a in articles], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
@@ -460,9 +463,9 @@ def main():
         rows = []
         for b in items:
             bg, fg = CARRIER_COLORS.get(b["carrier"], DEFAULT_COLOR)
-            rows.append(f'<li><a href="{root}articles/{b["slug"]}.html">'
+            rows.append(f'<li><a href="{root}articles/{b["slug"]}.html">{thumb(b, "thumb-mini")}<span class="mini-text">'
                         f'<span class="mini-carrier" style="--tbg:{bg};--tfg:{fg}">{html.escape(b["carrier"])}</span>'
-                        f'<span class="mini-title">{html.escape(b["title"])}</span>{deadline_badge(b)}</a></li>')
+                        f'<span class="mini-title">{html.escape(b["title"])}</span>{deadline_badge(b)}</span></a></li>')
         return f'<ul class="mini-list">{"".join(rows)}</ul>'
 
     def related_html(a):
@@ -497,8 +500,9 @@ def main():
         soon = [a for a in articles if a.get("end") and 0 <= (date.fromisoformat(a["end"]) - today()).days <= 14]
         soon.sort(key=lambda a: a["end"])
         items = "".join(
-            f'<li><a href="{root}articles/{a["slug"]}.html">{html.escape(a["title"])}</a>'
-            f'<span class="side-date">{a["end"][5:].replace("-", "/")}まで</span></li>' for a in soon
+            f'<li class="side-item"><a href="{root}articles/{a["slug"]}.html">{thumb(a, "thumb-mini")}'
+            f'<span class="side-text">{html.escape(a["title"])}'
+            f'<span class="side-date">{a["end"][5:].replace("-", "/")}まで</span></span></a></li>' for a in soon
         ) or "<li>2週間以内に終わるキャンペーンはありません</li>"
         cs = "".join(f'<li><a href="{root}carrier/{slug_of[c]}.html">{html.escape(c)}</a></li>' for c in carriers)
         cats = "".join(
