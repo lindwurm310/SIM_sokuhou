@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from build import SITE_URL, affiliate_for, ogp_image, parse_front_matter  # noqa: E402
+from build import SITE_URL, affiliate_for, page_url, ogp_image, parse_front_matter  # noqa: E402
 
 API_URL = "https://api.x.com/2/tweets"
 MAX_WEIGHT = 280  # X の文字数上限（全角は2、半角は1として数える）
@@ -66,7 +66,7 @@ def hashtag(name):
 
 
 def compose(meta, slug, include_url=True, measure=weight, limit=MAX_WEIGHT):
-    url = f"{SITE_URL}articles/{slug}.html"
+    url = page_url(f"articles/{slug}")
     tags = " ".join(hashtag(t) for t in [meta.get("carrier", "")] + HASHTAGS if t)
     title = meta["title"]
     carrier = meta.get("carrier", "")

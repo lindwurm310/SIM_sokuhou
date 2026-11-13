@@ -221,6 +221,15 @@ def deadline_badge(article):
 DEFAULT_OGP = "static/ogp/default.png"
 
 
+def page_url(path):
+    """外から見える最終URL。Cloudflare は .html 付きのURLを拡張子なしへ 307 で飛ばすので、
+    canonical / og:url / サイトマップ / SNSに載せるURLは最初から拡張子なしにそろえる。"""
+    path = path[:-5] if path.endswith(".html") else path
+    if path == "index" or path.endswith("/index"):
+        path = path[:-5]
+    return SITE_URL + path
+
+
 def ogp_image(slug):
     """記事のカード画像のURL。まだ作っていなければサイト共通の画像にする。"""
     path = f"static/ogp/{slug}.png"
@@ -307,11 +316,11 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
 {adsense()}
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
-<link rel="canonical" href="{SITE_URL}{path}">
+<link rel="canonical" href="{page_url(path)}">
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(description)}">
-<meta property="og:url" content="{SITE_URL}{path}">
+<meta property="og:url" content="{page_url(path)}">
 <meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
 <meta property="og:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
 <meta property="og:image:width" content="1200">
@@ -568,17 +577,17 @@ def main():
   {related_html(a)}
   <p class="back"><a href="../index.html">← 記事一覧へ戻る</a></p>
 </article>"""
-        url = f"{SITE_URL}articles/{a['slug']}.html"
+        url = page_url(f"articles/{a['slug']}")
         article_ld = {
             "@context": "https://schema.org", "@type": "NewsArticle",
             "mainEntityOfPage": {"@type": "WebPage", "@id": url},
             "headline": a["title"], "description": a["lead"],
             "image": [ogp_image(a["slug"])] + ([a["image"]] if a.get("image") else []),
             "datePublished": iso_time(a), "dateModified": a.get("updated") and f"{a['updated']}T00:00:00+09:00" or iso_time(a),
-            "author": {"@type": "Organization", "name": f"{SITE_NAME}編集部", "url": SITE_URL + "about.html"},
+            "author": {"@type": "Organization", "name": f"{SITE_NAME}編集部", "url": page_url("about")},
             "publisher": PUBLISHER, "keywords": ", ".join([a["carrier"]] + a["tags"]), "inLanguage": "ja",
         }
-        crumbs = [("トップ", SITE_URL), (a["carrier"], f"{SITE_URL}carrier/{slug_of[a['carrier']]}.html"),
+        crumbs = [("トップ", SITE_URL), (a["carrier"], page_url(f"carrier/{slug_of[a['carrier']]}")),
                   (a["title"], url)]
         crumb_ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]}
@@ -629,7 +638,7 @@ def main():
                    f'<nav class="matome-toc">{"".join(toc)}</nav>'
                    f'<div class="article-body">{"".join(sections)}</div></article>')
     matome_ld = {"@context": "https://schema.org", "@type": "ItemList", "name": matome_title,
-                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": f"{SITE_URL}articles/{a['slug']}.html"}
+                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": page_url(f"articles/{a['slug']}")}
                                      for i, a in enumerate(open_items)]}
     p = page(f"{matome_title} | {SITE_NAME}", matome_main, matome_desc, sidebar(""), path=MATOME_PATH,
              head=json_ld(matome_ld))
@@ -639,8 +648,8 @@ def main():
     def rfc822(a):
         return datetime.fromisoformat(iso_time(a)).strftime("%a, %d %b %Y %H:%M:%S +0900")
     feed_items = "".join(
-        f"<item><title>{html.escape(a['title'])}</title><link>{SITE_URL}articles/{a['slug']}.html</link>"
-        f"<guid isPermaLink=\"true\">{SITE_URL}articles/{a['slug']}.html</guid><pubDate>{rfc822(a)}</pubDate>"
+        f"<item><title>{html.escape(a['title'])}</title><link>{page_url("articles/" + a["slug"])}</link>"
+        f"<guid isPermaLink=\"true\">{page_url("articles/" + a["slug"])}</guid><pubDate>{rfc822(a)}</pubDate>"
         f"<category>{html.escape(a['carrier'])}</category><description>{html.escape(a['lead'])}</description>"
         f"<enclosure url=\"{ogp_image(a['slug'])}\" type=\"image/png\" length=\"0\"/></item>"
         for a in articles[:20])
@@ -665,7 +674,7 @@ def main():
     latest = {f"articles/{a['slug']}.html": a.get("updated") or a["date"] for a in articles}
     latest[MATOME_PATH] = now.isoformat()
     entries = "".join(
-        f"<url><loc>{SITE_URL}{u}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
+        f"<url><loc>{page_url(u)}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
         for u in urls)
     (OUT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
