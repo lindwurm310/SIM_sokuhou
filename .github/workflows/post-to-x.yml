@@ -11,7 +11,7 @@ on:
         required: true
 
 permissions:
-  contents: write  # カード画像（static/ogp/*.png）をコミットするため
+  contents: write  # カード画像（static/ogp/*.png）とアイキャッチ画像（static/thumb/*.webp）をコミットするため
   issues: write
 
 concurrency:
@@ -50,11 +50,18 @@ jobs:
             fi
           done
           echo "対象: ${targets:-なし}"
-          [ -n "$targets" ] || exit 0
+          # サムネイル用のアイキャッチ画像（static/thumb/*.webp）がまだない記事も対象にする
+          missing=""
+          for f in content/*.md; do
+            [ -f "static/thumb/$(basename "$f" .md).webp" ] || missing="$missing $f"
+          done
+          [ -n "$targets$missing" ] || exit 0
           sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk > /dev/null
           pip install -q pillow
-          python3 scripts/make_ogp.py $targets
-          git add static/ogp
+          [ -z "$targets" ] || python3 scripts/make_ogp.py $targets
+          # 画像がまだない記事のぶんだけ作る（作り直しはしない）
+          python3 scripts/make_ogp.py
+          git add static/ogp static/thumb
           git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
