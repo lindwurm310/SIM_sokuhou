@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """記事ごとの SNS 用画像（OGP画像、1200×630 の PNG）を static/ogp/<記事名>.png に作る。
+あわせて、サイトのサムネイル用のアイキャッチ画像（960×540 の WebP）を static/thumb/<記事名>.webp に作る。
+公式サイトの画像（image）がない記事や、公式画像が読み込めなかったときにこちらを表示する。
 
 X や Bluesky、LINE などで記事URLを共有したときに、この画像が大きなカードで表示される。
 記事タイトル・キャリア名・見どころ（thumb）・終了日を、キャリア色のカードに描く。
@@ -22,7 +24,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from build import CARRIER_COLORS, DEFAULT_COLOR, SITE_DESC, SITE_HOST, SITE_NAME, parse_front_matter  # noqa: E402
 
+from scripts.eyecatch import render_eyecatch  # noqa: E402
+
 OUT_DIR = ROOT / "static" / "ogp"
+THUMB_DIR = ROOT / "static" / "thumb"
 W, H = 1200, 630
 S = 2  # 2倍の大きさで描いてから縮小し、図形のふちをなめらかにする
 
@@ -203,7 +208,10 @@ def render_default():
 
 def save(img, path):
     path.parent.mkdir(parents=True, exist_ok=True)
-    img.save(path, optimize=True)
+    if path.suffix == ".webp":
+        img.save(path, quality=82, method=6)
+    else:
+        img.save(path, optimize=True)
     print(f"作成: {path.relative_to(ROOT)}")
 
 
@@ -215,10 +223,17 @@ def main(args):
         save(render_default(), OUT_DIR / "default.png")
     for path in targets:
         out = OUT_DIR / f"{path.stem}.png"
-        if out.exists() and not (force or files):
+        thumb = THUMB_DIR / f"{path.stem}.webp"
+        redo = force or bool(files)
+        if out.exists() and thumb.exists() and not redo:
             continue
         meta, _ = parse_front_matter(path.read_text(encoding="utf-8"))
-        save(render_article(meta), out)
+        meta["slug"] = path.stem
+        if redo or not out.exists():
+            save(render_article(meta), out)
+        if redo or not thumb.exists():
+            colors = CARRIER_COLORS.get(meta.get("carrier", ""), DEFAULT_COLOR)
+            save(render_eyecatch(meta, colors, font, wrap, text_width, logo_icon), thumb)
 
 
 if __name__ == "__main__":

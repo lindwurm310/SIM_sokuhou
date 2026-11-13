@@ -164,16 +164,29 @@ def markdown_to_html(md):
     return "\n".join(out)
 
 
+def eyecatch_path(article):
+    """scripts/make_ogp.py が作ったアイキャッチ画像（static/thumb/<記事名>.webp）のパス。なければ空。"""
+    path = f"static/thumb/{article['slug']}.webp"
+    return path if (ROOT / path).exists() else ""
+
+
 def thumb(article, extra=""):
-    """公式サイトの画像があれば使い、読み込めないときはキャリア色のカードを見せる。
+    """公式サイトの画像があれば使う。公式画像がない・読み込めないときは自動で作ったアイキャッチ画像を、
+    それもなければキャリア色のカードを見せる。
     extra にクラス名（thumb-mini など）を渡すと、小さい一覧用の見た目にできる。"""
     bg, fg = CARRIER_COLORS.get(article["carrier"], DEFAULT_COLOR)
     label = html.escape(article.get("thumb", article["carrier"]))
     carrier = html.escape(article["carrier"])
+    eye = eyecatch_path(article)
+    eye_src = "{root}" + eye if eye else ""
     img = ""
     if article.get("image"):
+        fallback = (f"this.onerror=null;this.src='{eye_src}';this.removeAttribute('referrerpolicy')"
+                    if eye else "this.remove()")
         img = (f'<img class="thumb-img" src="{html.escape(article["image"])}" alt="" loading="lazy" '
-               f'referrerpolicy="no-referrer" onerror="this.remove()">')
+               f'referrerpolicy="no-referrer" onerror="{fallback}">')
+    elif eye:
+        img = f'<img class="thumb-img" src="{eye_src}" alt="" loading="lazy" width="960" height="540">'
     cls = f"thumb {extra}".strip()
     return (f'<div class="{cls}" style="--tbg:{bg};--tfg:{fg}">'
             f'<span class="thumb-carrier">{carrier}</span>'
@@ -422,7 +435,7 @@ def main():
     (OUT / "data").mkdir()
     (OUT / "data" / "articles.json").write_text(json.dumps([
         {"slug": a["slug"], "title": a["title"], "carrier": a["carrier"], "tags": a["tags"], "end": a.get("end", ""),
-         "thumb": a.get("thumb", a["carrier"]), "image": a.get("image", ""),
+         "thumb": a.get("thumb", a["carrier"]), "image": a.get("image", ""), "eyecatch": eyecatch_path(a),
          "bg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[0], "fg": CARRIER_COLORS.get(a["carrier"], DEFAULT_COLOR)[1]}
         for a in articles], ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 

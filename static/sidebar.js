@@ -14,10 +14,13 @@
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
   }
-  // 記事一覧と同じサムネイル（公式画像、読み込めなければキャリア色のカード）を小さく出す
+  // 記事一覧と同じサムネイル（公式画像、なければ自動のアイキャッチ画像、それもなければキャリア色のカード）を小さく出す
   function thumb(a) {
+    var eye = a.eyecatch ? root + a.eyecatch : "";
     var img = a.image ? '<img class="thumb-img" src="' + esc(a.image) + '" alt="" loading="lazy" ' +
-      'referrerpolicy="no-referrer" onerror="this.remove()">' : "";
+      'referrerpolicy="no-referrer" onerror="' + (eye ? "this.onerror=null;this.src=&#39;" + esc(eye) +
+      "&#39;;this.removeAttribute(&#39;referrerpolicy&#39;)" : "this.remove()") + '">' :
+      eye ? '<img class="thumb-img" src="' + esc(eye) + '" alt="" loading="lazy">' : "";
     return '<div class="thumb thumb-mini" style="--tbg:' + a.bg + ";--tfg:" + a.fg + '">' +
       '<span class="thumb-carrier">' + esc(a.carrier) + '</span><span class="thumb-label">' +
       esc(a.thumb || a.carrier) + "</span>" + img + "</div>";
