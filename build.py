@@ -44,6 +44,7 @@ CARRIER_COLORS = {
     "mineo": ("#d6f5ee", "#0f7a66"),
     "Amazon": ("#e3f4ff", "#1f6f9e"),
     "セキュリティ": ("#ffe9e0", "#b23c17"),
+    "ゲオモバイル": ("#dfe7ff", "#1f3f99"),
 }
 JST = timezone(timedelta(hours=9))
 
@@ -85,6 +86,7 @@ CARRIER_SLUGS = {
     "mineo": "mineo",
     "Amazon": "amazon",
     "セキュリティ": "security",
+    "ゲオモバイル": "geomobile",
 }
 
 
