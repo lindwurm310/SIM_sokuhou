@@ -11,6 +11,7 @@ period: 2026年10月23日 10:00〜終了日未定
 image: https://images.prismic.io/unextmobile/TByXrBJcMhtMhGj9_Topic%E8%A8%98%E4%BA%8B%E7%94%A8%E7%94%BB%E5%83%8F_960%C3%97540.jpg?auto=format,compress
 image_credit: U-NEXT MOBILE公式サイト
 source: https://mobile.unext.jp/topic/anniv1800pt
+image_size: 960x540
 ---
 動画配信サービスU-NEXTの格安SIM「U-NEXT MOBILE」が、サービス開始1周年を記念したキャンペーンを始めます。
 

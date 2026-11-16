@@ -9,6 +9,7 @@ lead: 有機ELになった新しい「iPad mini（A20 Pro）」が11月6日に�
 tags: 返却プログラム
 period: 2026年10月29日 予約開始、11月6日発売
 source: https://newsroom.kddi.com/news/detail/kddi_nr-1219_4789.html
+image_check: ng
 ---
 Appleの小さなタブレット「iPad mini」の新モデル（A20 Pro）が、大手3社から**11月6日（金）**に発売されます。キャリアで買えるのは、SIMを入れて外でも通信できるWi-Fi＋Cellularモデルです（eSIM専用）。
 

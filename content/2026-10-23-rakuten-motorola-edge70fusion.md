@@ -11,6 +11,7 @@ period: 終了日未定（公式サイトで要確認）
 image: https://network.mobile.rakuten.co.jp/assets/img/product/motorola-edge-70-fusion/ogp.png
 image_credit: 楽天モバイル公式サイト
 source: https://network.mobile.rakuten.co.jp/product/smartphone/motorola-edge-70-fusion/
+image_size: 1200x630
 ---
 モトローラの新機種「motorola edge 70 fusion」が、10月23日に楽天モバイルから発売されました。返却不要で、ポイント還元込みで5万円を切ります。
 

@@ -12,6 +12,7 @@ end: 2026-11-10
 image: https://cdn.softbank.jp/mobile/set/data/special/hawks-nipponchampions2026/img/shared/ogp.jpg
 image_credit: ソフトバンク公式サイト
 source: https://www.softbank.jp/mobile/special/hawks-nipponchampions2026/
+image_size: 1200x630
 ---
 SMBC日本シリーズ2026でホークスが優勝したことを記念して、ソフトバンクとグループ各社がいっせいにキャンペーンを始めました。**スマホの契約がなくても応募できる**ものが多いのが特徴です。
 

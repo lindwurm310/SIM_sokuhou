@@ -9,6 +9,9 @@ x_intro: ソフトバンクに子どもとシニア向けの新しいプラン�
 tags: MNP
 period: 2026年11月18日〜
 source: https://www.softbank.jp/mobile/price_plan/data/sumaho-debut-plan2/
+image: https://www.softbank.jp/mobile/set/data/price_plan/data/sumaho-debut-plan2/img/shared/ogp.png
+image_credit: ソフトバンク公式サイト
+image_size: 1200x630
 ---
 ソフトバンクが**11月18日（水）**から、スマホデビュー向けの新料金プラン「**スマホデビュープラン2**」を提供します。ガラケーを使い続けたい人向けの「ケータイフィットプラン」も同じ料金で始まります。
 

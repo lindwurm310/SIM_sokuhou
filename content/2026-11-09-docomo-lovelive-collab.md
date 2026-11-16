@@ -13,6 +13,7 @@ x_intro: ドコモでラブライブ！の限定グッズが当たるよ。
 image: https://cs1.animestore.docomo.ne.jp/anime_kv/html/CP/img/docomo-lovelive_20261102_twittercard.png
 image_credit: dアニメストア公式サイト（NTTドコモ）
 source: https://animestore.docomo.ne.jp/animestore/CP/CP00002156
+image_size: 800x418
 ---
 ドコモと「ラブライブ！シリーズ」のコラボキャンペーンが第2弾に入りました。ドコモの大容量プランを使っている人と、dアニメストアの会員が応募できる**抽選のプレゼント企画**です。応募は**11月26日（木）23:59まで**です。
 

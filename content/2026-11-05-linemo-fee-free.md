@@ -10,6 +10,9 @@ tags: MNP, SIMのみ, 事務手数料無料, ポイント還元
 period: 2026年11月4日〜11月8日
 end: 2026-11-08
 source: https://www.linemo.jp/info/press/2026/26110401.html
+image: https://www.linemo.jp/assets/images/ogp/info.png
+image_credit: LINEMO公式サイト
+image_size: 1200x630
 ---
 10月末まで実施されていたPayPayポイント増額は終わりましたが、11月最初の週は**契約事務手数料の無料化**です。期間はわずか5日間なので、乗り換えを考えている人は急ぎましょう。
 

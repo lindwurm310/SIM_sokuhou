@@ -12,6 +12,7 @@ end: 2026-11-28
 image: https://corp.mobile.rakuten.co.jp/assets-article/news/press/2026/1030_02/20261030_RakutenMobile_KV.jpg
 image_credit: 楽天モバイル公式サイト
 source: https://corp.mobile.rakuten.co.jp/news/press/2026/1030_02/
+image_size: 4000x2250
 ---
 楽天モバイルとファミリーマートが組んで、コンビニの駐車場に**楽天モバイルの出張ショップ（キャラバンカー）**を出しています。契約しなくても、見積もりとアンケートだけで特典がもらえるのがポイントです。
 

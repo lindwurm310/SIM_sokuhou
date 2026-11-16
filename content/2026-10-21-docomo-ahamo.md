@@ -11,6 +11,7 @@ period: 終了日未定（公式サイトで要確認）
 image: https://cache.cil.ahamo.com/common/images/img_ogp.png
 image_credit: ahamo公式サイト
 source: https://ahamo.com/
+image_size: 1200x630
 ---
 ドコモ回線への乗り換えは、端末を買う人もSIMだけの人も特典があります。
 

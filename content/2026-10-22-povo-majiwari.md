@@ -11,6 +11,7 @@ period: 2025年5月1日〜終了日未定（公式サイトで要確認）
 image: https://povo.jp/cms/povo/OGP/20231201_povo_New_OGP-image_1200-630.jpg
 image_credit: povo公式サイト
 source: https://povo.jp/campaign/detail/mnp_aupay_cpn_2025_05/
+image_check: ng
 ---
 基本料0円のpovo2.0は、使うぶんだけ「トッピング」を買うスタイル。乗り換えと同時に1年分のデータをまとめ買いすると、**その半額がau PAY残高で戻ってくる**のが「本気割」です。
 

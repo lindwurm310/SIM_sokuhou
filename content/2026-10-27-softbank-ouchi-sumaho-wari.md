@@ -9,6 +9,7 @@ lead: ソフトバンクがモバイル事業20周年企画「SUPER ARIGATO YEAR
 tags: 割引
 period: 2026年10月21日〜終了日未定
 source: https://www.softbank.jp/corp/news/press/sbkk/2026/20261023_01/
+image_check: ng
 ---
 ソフトバンクのスマホと自宅のネット回線をまとめると、これまでの「おうち割 光セット」に**さらに月2860円の割引**が上乗せされるキャンペーンです。
 

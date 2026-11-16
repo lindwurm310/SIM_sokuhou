@@ -11,6 +11,7 @@ period: 早期アクセスは10月29日から（終了日未定）
 source: https://www.amazon.co.jp/newalexa
 image: https://assets.aboutamazon.com/dims4/default/35b1674/2147483647/strip/true/crop/1980x990+0+22/resize/1200x600!/quality/90/?url=https%3A%2F%2Fassets.aboutamazon.com%2F51%2Ff0%2F6a17188e42c0bf0abf0e0ebe954b%2Falexa-livingroom-woman.jpg
 image_credit: Amazon公式サイト
+image_size: 1200x600
 ---
 おなじみの「アレクサ」が生成AIで大きく進化した「Alexa+」が、ついに日本でも使えるようになりました。まずは**早期アクセス（先行利用）として順番に案内**される形で、早期アクセス中は誰でも無料です。
 

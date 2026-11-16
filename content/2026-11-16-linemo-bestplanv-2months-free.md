@@ -11,6 +11,9 @@ tags: MNP, SIMのみ
 period: 2026年11月16日〜11月22日
 end: 2026-11-22
 source: https://www.linemo.jp/campaign/syukakusai/202611/1116/
+image: https://www.linemo.jp/campaign/syukakusai/202611/1116/img/ogp.png
+image_credit: LINEMO公式サイト
+image_size: 1200x630
 ---
 ソフトバンクのオンライン専用ブランドLINEMOの「5周年大週穫祭」、11月の3週目は**ベストプランVの基本料が2カ月0円**になるキャンペーンです。申し込みは**11月16日（月）〜11月22日（日）**の1週間だけ。
 

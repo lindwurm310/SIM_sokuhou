@@ -12,6 +12,7 @@ source: https://network.mobile.rakuten.co.jp/campaign/ipad-discount/
 x_intro: 楽天モバイルでiPadが2万円引きになってるよ。
 image: https://network.mobile.rakuten.co.jp/assets/img/campaign/ipad-discount/ogp.png
 image_credit: 楽天モバイル公式サイト
+image_size: 1200x630
 ---
 楽天モバイルが**11月6日（金）**から、iPadシリーズの取り扱いを始めました。公式サイト・楽天市場店は8時から、楽天モバイルショップは開店から購入できます。あわせて、回線とセットで買うと安くなるキャンペーンが3つ始まっています。いずれも**終了日は未定**です。
 

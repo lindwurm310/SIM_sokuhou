@@ -9,6 +9,7 @@ x_intro: ドコモの5G SAがまたつながりにくくなってたよ。
 tags:
 period: 2026年11月16日 10:02〜15:58
 source: https://www.docomo.ne.jp/info/network/kanto/pages/261116_01_m.html
+image_check: ng
 ---
 ドコモの「5G SA（Standalone）」サービスで、**11月16日（月）10時2分ごろ**から全国的に通信障害が起きました。ドコモは**15時58分に完全復旧**したと発表しています。
 

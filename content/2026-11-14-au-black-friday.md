@@ -10,6 +10,7 @@ tags: ガジェット
 period: 2026年11月13日〜12月6日
 end: 2026-12-06
 source: https://www.au.com/mobile/campaign/bf2026/
+image_check: ng
 ---
 auが**11月13日（金）〜12月6日（日）**の期間で「BLACK FRIDAY 2026」を開催しています。スマートウォッチやイヤホンなど、スマホと一緒に使う周辺機器が割引になります。
 

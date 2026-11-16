@@ -12,6 +12,7 @@ end: 2026-11-13
 image: https://www.ymobile.jp/common_c/images/common/ogp.png
 image_credit: ワイモバイル公式サイト
 source: https://www.ymobile.jp/store/sp/iphone_sbc/
+image_check: ng
 ---
 ワイモバイルのオンラインストアで、認定中古の「iPhone 14」が**半額**になりました。11月1日までの価格（2万9950円）からさらに7000円近く下がっています。
 

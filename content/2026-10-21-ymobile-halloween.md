@@ -11,6 +11,7 @@ end: 2026-11-02
 image: https://www.ymobile.jp/store/sp/special_sale/images/ogp.webp?20261016
 image_credit: ワイモバイル公式サイト
 source: https://www.ymobile.jp/store/sp/special_sale/
+image_size: 1200x630
 ---
 ワイモバイルが期間限定の「ハロウィンセール」を始めました。今回のポイントは**事務手数料の無料化**と**SIMのみ契約のポイント増額**の2つ。端末とセットでも、SIMだけでも得をしやすい内容です。
 

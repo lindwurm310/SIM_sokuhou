@@ -13,6 +13,7 @@ x_intro: auとUQ mobileの人はAmazonプライムが2カ月実質0円になる�
 image: https://www.au.com/adobe/dynamicmedia/deliver/dm-aid--0537141b-f3ac-4267-800d-1e2147282056/ogp_img_2ee45f8f9fb6942a.png?quality=90&preferwebp=false
 image_credit: au公式サイト
 source: https://www.au.com/pr/amazon_prime/
+image_size: 1200x630
 ---
 auとUQ mobileのスマホを使っている人向けに、**Amazonプライムが2カ月間実質0円**になるキャンペーンが始まりました。年末のセールに向けてプライム会員になっておきたい人にちょうどいいタイミングです。
 

@@ -11,6 +11,7 @@ period: 2026年11月1日〜終了日未定
 image: https://www.uqwimax.jp/common2/images/ogp.png
 image_credit: UQ mobile公式サイト
 source: https://www.uqwimax.jp/mobile/plan/option/appleone/
+image_size: 1200x630
 ---
 UQ mobileのiPhoneを使っている人が、UQ mobileからAppleの4つのサービスをまとめた「Apple One」に申し込むと、**最初の2カ月が無料**になります。
 

@@ -12,6 +12,7 @@ end: 2026-11-30
 image: https://mineo.jp/asset/img/mineo_ogp_v2.png
 image_credit: mineo公式サイト
 source: https://mineo.jp/campaign/cp-20260917-1/
+image_check: ng
 ---
 mineo（マイネオ）で音声通話つきの「マイピタ デュアルタイプ」を新しく申し込むと、**月額料金が最大6カ月間安くなる**「秋のピッタリ割」の受付が、**11月30日（月）まで**です。
 

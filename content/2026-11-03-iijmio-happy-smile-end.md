@@ -9,6 +9,7 @@ tags: MNP, SIMのみ
 period: 2026年6月9日〜11月4日 23:59
 end: 2026-11-04
 source: https://www.iijmio.jp/info/iij/1780388508.html
+image_check: ng
 ---
 格安SIMのIIJmioで、新しく契約した人の月額料金を最初の数カ月安くするキャンペーンが**11月4日（水）23時59分**で終わります。申し込むなら今日・明日が最後のチャンスです。
 

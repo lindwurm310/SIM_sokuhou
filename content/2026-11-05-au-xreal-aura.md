@@ -12,6 +12,7 @@ end: 2026-11-26
 image: https://www.au.com/adobe/dynamicmedia/deliver/dm-aid--1301e1c2-09c8-491b-bdfa-8a2103d24f7a/if_2026-012_ogp_715520fa7037ca08.jpg?preferwebp=false&quality=90
 image_credit: au公式サイト
 source: https://www.au.com/information/topic/mobile/2026-012/
+image_size: 1200x630
 ---
 メガネのようにかけるだけで、目の前に大きな画面やアプリを表示できる「XREAL AURA」がauから登場します。Googleの「Android XR」を国内で初めて搭載し、Google Playのアプリや生成AIの「Gemini」も使えます。
 

@@ -13,6 +13,7 @@ x_intro: IIJmioでタブレットがおトクに買えるよ。
 image: https://www.iijmio.jp/campaign/device/gigasetprice/img/main_sp.png
 image_credit: IIJmio公式サイト
 source: https://www.iijmio.jp/info/iij/1793240595.html
+image_size: 640x440
 ---
 スマホのセールが続くIIJmioで、今度は**タブレット・モバイルルーター・PC**が対象の「回線セット特価」が始まりました。ギガプラン（音声・データ・eSIMなどSIMの種類は問いません）を新しく申し込むのと同時に買うと、特別価格になります。
 

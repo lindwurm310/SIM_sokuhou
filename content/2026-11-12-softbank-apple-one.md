@@ -9,6 +9,7 @@ x_intro: ソフトバンク・ワイモバイル・LINEMOでApple Oneが10％還
 tags: iPhone, ポイント還元
 period: 2026年11月18日〜終了時期未定
 source: https://www.softbank.jp/mobile/service/apple-one/
+image_check: ng
 ---
 ソフトバンクが、ソフトバンク・ワイモバイル・LINEMOの3ブランドで**11月18日（水）**から「Apple One」の個人プランを提供します。Apple Music・Apple TV・Apple Arcade・iCloud+をまとめたセットで、月額は**1,350円**です。
 

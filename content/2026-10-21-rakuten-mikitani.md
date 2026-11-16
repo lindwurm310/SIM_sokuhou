@@ -11,6 +11,7 @@ period: 終了日未定（公式サイトで要確認）
 image: https://network.mobile.rakuten.co.jp/assets/img/common/ogp.png
 image_credit: 楽天モバイル公式サイト
 source: https://network.mobile.rakuten.co.jp/campaign/
+image_check: ng
 ---
 端末はそのまま、SIMだけ楽天モバイルに替えたい人に向いているのが「三木谷キャンペーン」です。
 

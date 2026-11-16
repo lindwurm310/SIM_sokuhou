@@ -9,6 +9,9 @@ tags: MNP, SIMのみ, 事務手数料無料
 period: 2026年9月1日〜10月31日
 end: 2026-10-31
 source: https://www.linemo.jp/campaign/freetrial_202609/
+image: https://www.linemo.jp/campaign/freetrial_202609/img/ogp.png
+image_credit: LINEMO公式サイト
+image_size: 1200x630
 ---
 ソフトバンクのオンライン専用ブランドLINEMOを、**お金をかけずに3カ月試せる**キャンペーンがまもなく締め切りです。
 

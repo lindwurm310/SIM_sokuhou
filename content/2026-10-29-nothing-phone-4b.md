@@ -9,6 +9,7 @@ tags: MNP, 端末割引, Android
 period: IIJmioのセールは11月4日まで（他社は終了日未定）
 end: 2026-11-04
 source: https://jp.nothing.tech/products/phone-4b
+image_check: ng
 ---
 背面が光る独特のデザインで人気のNothingから、手ごろな価格帯の「Nothing Phone (4b)」が登場しました。メーカー直販は5万9800円ですが、**乗り換えと同時に買うと最大2万円以上安く**なります。
 

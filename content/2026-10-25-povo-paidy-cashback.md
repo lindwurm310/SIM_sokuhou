@@ -12,6 +12,7 @@ end: 2026-11-30
 image: https://povo.jp/cms/povo/OGP/20231201_povo_New_OGP-image_1200-630.jpg
 image_credit: povo公式サイト
 source: https://povo.jp/news/newsrelease/20261020_01/
+image_check: ng
 ---
 先日紹介したpovoの「[本気割](https://simsoku.com/articles/2026-10-22-povo-majiwari.html)」に、**ペイディ払いの追加キャッシュバック**が重ねられるようになりました。1年分のデータを買う予定の人は、支払い方法をペイディにするだけで還元が増えます。
 

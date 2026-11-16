@@ -12,6 +12,7 @@ end: 2027-02-28
 image: https://www.softbank.jp/corp/set/data/news/press/sbkk/2026/20261023_01/img/index_pic_01.jpg
 image_credit: ソフトバンク公式サイト（ニュースリリース）
 source: https://www.softbank.jp/mobile/campaigns/list/oiwai-super-chusen/
+image_size: 1200x675
 ---
 ソフトバンクの「SUPER ARIGATO YEAR」（モバイル事業20周年・ブロードバンド事業25周年・でんき事業10周年の記念企画）のひとつです。**スマホの契約がなくても応募できて**、当選者の数がとても多いのが特徴です。
 

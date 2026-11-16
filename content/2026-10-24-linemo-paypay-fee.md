@@ -11,6 +11,7 @@ end: 2026-11-03
 image: https://www.linemo.jp/campaign/syukakusai/202610/1024/img/ogp.png
 image_credit: LINEMO公式サイト
 source: https://www.linemo.jp/campaign/syukakusai/202610/1024/
+image_size: 1200x630
 ---
 ソフトバンクのオンライン専用ブランドLINEMOで、**PayPayポイントの増額**と**契約事務手数料の無料化**が同時に始まりました。2つが重なるのは今回の週替わりキャンペーンならではです。
 

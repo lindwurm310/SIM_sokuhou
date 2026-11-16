@@ -11,6 +11,7 @@ period: 終了日未定（公式サイトで要確認）
 image: https://network.mobile.rakuten.co.jp/assets/img/campaign/iphone-discount/ogp-260925.png
 image_credit: 楽天モバイル公式サイト
 source: https://network.mobile.rakuten.co.jp/campaign/iphone-discount/
+image_size: 1200x630
 ---
 楽天モバイルで、iPhone 17e（256GB）が**2年間の支払い総額24円**で使えるキャンペーンが続いています。ただし「端末を返すこと」が前提です。
 

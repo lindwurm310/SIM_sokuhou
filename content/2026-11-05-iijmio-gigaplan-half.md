@@ -11,6 +11,7 @@ period: 2026年11月5日〜（終了日未定）
 image: https://www.iijmio.jp/gigaplan/img/main.png
 image_credit: IIJmio公式サイト
 source: https://www.iijmio.jp/info/iij/1793256547.html
+image_check: ng
 ---
 11月4日で月額割引キャンペーンが終わったIIJmioですが、翌日の**11月5日から新しい割引キャンペーン**が始まりました。今回は5ギガから35ギガまで、選べる容量が広がっています。
 

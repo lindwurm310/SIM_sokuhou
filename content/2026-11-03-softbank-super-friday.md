@@ -12,6 +12,7 @@ end: 2026-11-27
 image: https://www.softbank.jp/mobile/set/data/special/super-friday/img/ogp_20261020.webp
 image_credit: ソフトバンク公式サイト
 source: https://www.softbank.jp/mobile/special/super-friday/
+image_size: 1200x630
 ---
 ソフトバンクの「SUPER ARIGATO YEAR」の企画のひとつで、毎月の金曜日にソフトバンクユーザーがお店で特典をもらえる「SUPER FRIDAY 20th」が始まります。第1弾の11月は**モスバーガーの「モスチキン」1個**です。
 
