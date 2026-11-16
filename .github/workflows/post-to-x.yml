@@ -27,6 +27,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 引用元（各社公式ページ）の og:image を探し、カード画像に使えるものは記事の前付けに書き足す
+      - name: Use official images from sources
+        run: |
+          pip install -q pillow
+          python3 scripts/fetch_source_image.py || true
+          git add content
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "記事に公式サイトの画像を設定"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
       - name: Make card images
         env:
           BEFORE: ${{ github.event.before }}
