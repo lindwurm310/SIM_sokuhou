@@ -251,6 +251,21 @@ def ogp_image(slug):
     return SITE_URL + (path if (ROOT / path).exists() else DEFAULT_OGP)
 
 
+# X などで共有したときのカード画像に、引用元（各社公式ページ）の og:image を使うか。
+# False にすると、すべての記事で自動生成のカード画像（static/ogp/*.png）に戻る。
+OGP_USE_SOURCE_IMAGE = True
+
+
+def card_image(article):
+    """記事のカード画像（URL, 幅, 高さ）。scripts/fetch_source_image.py が確かめた公式画像
+    （image_size が入っているもの）があればそれを、なければ自動生成のカード画像を使う。"""
+    size = article.get("image_size", "")
+    if OGP_USE_SOURCE_IMAGE and article.get("image") and re.fullmatch(r"\d+x\d+", size):
+        w, h = size.split("x")
+        return article["image"], w, h
+    return ogp_image(article["slug"]), "1200", "630"
+
+
 def json_ld(*items):
     """検索エンジン向けの構造化データ（JSON-LD）。"""
     return "".join('<script type="application/ld+json">'
@@ -322,7 +337,7 @@ PUBLISHER = {"@type": "Organization", "name": SITE_NAME, "url": SITE_URL,
              "logo": {"@type": "ImageObject", "url": SITE_URL + "static/favicon.svg"}}
 
 
-def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head=""):
+def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head="", image_size=("1200", "630")):
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -338,8 +353,8 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
 <meta property="og:url" content="{page_url(path)}">
 <meta property="og:type" content="{'article' if path.startswith('articles/') else 'website'}">
 <meta property="og:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="{image_size[0]}">
+<meta property="og:image:height" content="{image_size[1]}">
 <meta property="og:image:alt" content="{html.escape(title)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{html.escape(image or SITE_URL + DEFAULT_OGP)}">
@@ -597,7 +612,7 @@ def main():
             "@context": "https://schema.org", "@type": "NewsArticle",
             "mainEntityOfPage": {"@type": "WebPage", "@id": url},
             "headline": a["title"], "description": a["lead"],
-            "image": [ogp_image(a["slug"])] + ([a["image"]] if a.get("image") else []),
+            "image": list(dict.fromkeys([card_image(a)[0], ogp_image(a["slug"])] + ([a["image"]] if a.get("image") else []))),
             "datePublished": iso_time(a), "dateModified": a.get("updated") and f"{a['updated']}T00:00:00+09:00" or iso_time(a),
             "author": {"@type": "Organization", "name": f"{SITE_NAME}編集部", "url": page_url("about")},
             "publisher": PUBLISHER, "keywords": ", ".join([a["carrier"]] + a["tags"]), "inLanguage": "ja",
@@ -606,8 +621,10 @@ def main():
                   (a["title"], url)]
         crumb_ld = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]}
+        card, cw, ch = card_image(a)
         p = page(f"{seo_title(a)} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
-                 path=f"articles/{a['slug']}.html", image=ogp_image(a["slug"]), head=json_ld(article_ld, crumb_ld))
+                 path=f"articles/{a['slug']}.html", image=card, head=json_ld(article_ld, crumb_ld),
+                 image_size=(cw, ch))
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for path in sorted(PAGES.glob("*.md")):
