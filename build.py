@@ -340,6 +340,22 @@ PUBLISHER = {"@type": "Organization", "name": SITE_NAME, "url": SITE_URL,
              "logo": {"@type": "ImageObject", "url": SITE_URL + "static/favicon.svg"}}
 
 
+def mnp_banner(path):
+    """ヘッダー直下に出す「今MNPするなら？」の大きなバナー（TOP5ページ自身には出さない）。"""
+    items = MNP_TOP5.get("items", [])
+    if path == MNP_PATH or not items:
+        return ""
+    top = items[0]
+    upd = MNP_TOP5["updated"]
+    return (f'<div class="mnp-hero"><div class="wrap"><a class="mnp-hero-link" href="{{root}}{MNP_PATH}">'
+            f'<span class="mnp-hero-kicker">固定記事・毎日更新</span>'
+            f'<span class="mnp-hero-title">今MNPするなら？</span>'
+            f'<span class="mnp-hero-sub">維持費と還元のバランスで選んだ乗り換えおすすめTOP5</span>'
+            f'<span class="mnp-hero-top">いま1位：{html.escape(top["carrier"])}「{html.escape(top["benefit"])}」'
+            f'<span class="mnp-hero-date">{int(upd[5:7])}/{int(upd[8:10])}更新</span></span>'
+            f'<span class="mnp-hero-cta">TOP5を見る →</span></a></div></div>')
+
+
 def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head="", image_size=("1200", "630")):
     return f"""<!doctype html>
 <html lang="ja">
@@ -391,6 +407,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
       <span class="icon-dark">🌙 ダーク</span><span class="icon-light">☀️ ライト</span>
     </button>
   </div>
+  {mnp_banner(path)}
   <nav class="carrier-nav"><div class="wrap">{{nav}}</div></nav>
 </header>
 <div class="wrap layout">
@@ -569,12 +586,7 @@ def main():
 
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE_URL,
                "description": SITE_DESC, "inLanguage": "ja", "publisher": PUBLISHER}
-    top = MNP_TOP5["items"][0] if MNP_TOP5["items"] else None
-    mnp_banner = (f'<a class="mnp-banner" href="{MNP_PATH}"><span class="mnp-banner-kicker">固定記事</span>'
-                  f'<span class="mnp-banner-title">今MNPするなら？乗り換えおすすめTOP5</span>'
-                  f'<span class="mnp-banner-sub">いま1位は{html.escape(top["carrier"])}の「{html.escape(top["benefit"])}」'
-                  f'・{jp_date(MNP_TOP5["updated"])}更新 →</span></a>' if top else "")
-    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", "", mnp_banner), sidebar=sidebar(""), path="",
+    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="",
                  head=json_ld(site_ld))
     (OUT / "index.html").write_text(render(index, "", nav("", "all")), encoding="utf-8")
 
@@ -689,8 +701,8 @@ def main():
     slugs = {a["slug"] for a in articles}
     upd = MNP_TOP5["updated"]
     mnp_title = f"今MNPするなら？乗り換えおすすめTOP5【{int(upd[:4])}年{int(upd[5:7])}月】"
-    mnp_desc = ("いま他社から乗り換える（MNP）ならどこがおトク？キャッシュバック・ポイント還元・端末割引の"
-                "おすすめキャンペーンを5つに絞って毎日見直しています。")
+    mnp_desc = ("いま他社から乗り換える（MNP）ならどこがおトク？キャッシュバックや割引の大きさだけでなく、"
+                "毎月の維持費とのバランスで選んだおすすめキャンペーンを5つに絞って毎日見直しています。")
     ranks = []
     for i, it in enumerate(MNP_TOP5["items"][:5], 1):
         bg, fg = CARRIER_COLORS.get(it["carrier"], DEFAULT_COLOR)
@@ -709,6 +721,12 @@ def main():
             f'<h2 class="mnp-rank-benefit">{html.escape(it["benefit"])}</h2>'
             f'<p class="mnp-rank-name">{html.escape(it["name"])}</p>'
             f'<p>{inline(it.get("summary", ""))}</p>'
+            + (f'<dl class="mnp-cost"><div><dt>対象プラン</dt><dd>{html.escape(it["plan"])}</dd></div>'
+               f'<div><dt>月額の目安</dt><dd>{html.escape(it.get("monthly", ""))}</dd></div>'
+               + (f'<div class="mnp-cost-year"><dt>1年間の実質負担</dt><dd>{it["cost_year"]:,}円'
+                  f'<small>（月あたり約{round(it["cost_year"] / 12):,}円）</small></dd></div>'
+                  if it.get("cost_year") else "")
+               + '</dl>' if it.get("plan") else "")
             + (f'<ul>{lis}</ul>' if lis else "")
             + (f'<p class="mnp-rank-for">こんな人におすすめ：{html.escape(it["for"])}</p>' if it.get("for") else "")
             + f'<p class="period">期間：{html.escape(it.get("period") or "終了日未定")}</p>'
@@ -719,8 +737,10 @@ def main():
     mnp_main = (f'<article class="article mnp-page"><h1 class="article-title">{mnp_title}</h1>'
                 f'<p class="article-meta"><time datetime="{upd}">{upd.replace("-", "/")} 更新</time></p>'
                 f'{PR_NOTE.format("本記事") if A8_LINKMGR_ID else ""}'
-                f'<p>{html.escape(mnp_desc)}もらえる金額の大きさと条件の手軽さで順位をつけています。'
-                '条件は変わることがあるので、申し込む前に必ず各社の公式サイトで確認してください。</p>'
+                f'<p>{html.escape(mnp_desc)}</p>'
+                '<div class="note">選び方：①代表的なプランを1年間使ったときの実質負担（月額料金から割引・還元を引いた金額、通話料・事務手数料は除く）が安い順。'
+                '②「過去にその会社を使った人」「同じ特典を受けたことがある人」が対象外になるキャンペーンは、誰でも使えるとは限らないので載せていません。<br>'
+                '条件は変わることがあるので、申し込む前に必ず各社の公式サイトで確認してください。</div>'
                 f'<nav class="matome-toc">{mnp_toc}</nav>'
                 f'<div class="article-body">{"".join(ranks)}</div>'
                 f'<p class="related-more related-matome"><a href="{MATOME_PATH}">ほかの開催中キャンペーンもまとめて見る →</a></p>'
