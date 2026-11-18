@@ -1,5 +1,5 @@
 {
-  "_説明": "「今MNPするなら？」ページ（mnp.html）のおすすめTOP5。items の並び順がそのまま1位〜5位。選び方：①過去にその会社を使った人・同じ特典を受けた人・一定期間内に特典を使った人が対象外になるキャンペーンは載せない（1回線1回限りはOK）。②還元額だけでなく、1年間使ったときの実質負担（月額料金−割引−還元）が安く、還元とのバランスがよい順に並べる。cost_year は代表プランを1年使ったときの実質負担（税込・通話料や事務手数料は除く）。数字は各社公式ページで確認したものだけを書く。",
+  "_説明": "「今MNPするなら？」ページ（mnp.html）のおすすめTOP5。items の並び順がそのまま1位〜5位。選び方：①過去にその会社を使った人・同じ特典を受けた人・一定期間内に特典を使った人が対象外になるキャンペーンは載せない（1回線1回限りはOK）。②還元額だけでなく、1年間使ったときの実質負担（月額料金−割引−還元）が安く、還元とのバランスがよい順に並べる。cost_year は代表プランを1年使ったときの実質負担（税込・通話料や事務手数料は除く）。数字は各社公式ページで確認したものだけを書く。 image には各社公式ページの og:image（なければ公式サイト共通の画像）のURLを、image_credit に出典を入れる。",
   "updated": "2026-11-18",
   "items": [
     {
@@ -20,7 +20,9 @@
       "end": "",
       "period": "2026年11月5日〜終了日未定",
       "source": "https://www.iijmio.jp/campaign/mio.html?cptype=simcp",
-      "article": "2026-11-05-iijmio-gigaplan-half"
+      "article": "2026-11-05-iijmio-gigaplan-half",
+      "image": "https://www.iijmio.jp/image/icon-og01.png",
+      "image_credit": "IIJmio公式サイト"
     },
     {
       "carrier": "mineo",
@@ -41,7 +43,9 @@
       "end": "2026-11-30",
       "period": "2026年9月17日〜11月30日",
       "source": "https://mineo.jp/campaign/cp-20260917-1/",
-      "article": "2026-11-02-mineo-pittari-oppo"
+      "article": "2026-11-02-mineo-pittari-oppo",
+      "image": "https://mineo.jp/asset/img/mineo_ogp_v2.png",
+      "image_credit": "mineo公式サイト"
     },
     {
       "carrier": "LINEMO",
@@ -61,7 +65,9 @@
       "end": "2026-11-22",
       "period": "2026年11月16日〜11月22日",
       "source": "https://www.linemo.jp/campaign/syukakusai/202611/1116/",
-      "article": "2026-11-16-linemo-bestplanv-2months-free"
+      "article": "2026-11-16-linemo-bestplanv-2months-free",
+      "image": "https://www.linemo.jp/campaign/syukakusai/202611/1116/img/ogp.png",
+      "image_credit": "LINEMO公式サイト"
     },
     {
       "carrier": "ワイモバイル",
@@ -81,7 +87,9 @@
       "end": "",
       "period": "2026年7月17日〜",
       "source": "https://www.ymobile.jp/cp/cho-otokuwari/",
-      "article": ""
+      "article": "",
+      "image": "https://www.ymobile.jp/common_c/images/common/ogp.png",
+      "image_credit": "ワイモバイル公式サイト"
     },
     {
       "carrier": "ワイモバイル",
@@ -102,7 +110,9 @@
       "end": "",
       "period": "終了日未定",
       "source": "https://www.ymobile.jp/lineup/iphone/iphone16e/?contract=mnp",
-      "article": ""
+      "article": "",
+      "image": "https://www.ymobile.jp/iphone/images/ogp_16e.png?20250221",
+      "image_credit": "ワイモバイル公式サイト"
     }
   ]
 }
