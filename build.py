@@ -348,9 +348,9 @@ def mnp_banner(path):
     top = items[0]
     upd = MNP_TOP5["updated"]
     return (f'<div class="mnp-hero"><div class="wrap"><a class="mnp-hero-link" href="{{root}}{MNP_PATH}">'
-            f'<span class="mnp-hero-kicker">固定記事・毎日更新</span>'
+            f'<span class="mnp-hero-kicker">毎日更新</span>'
             f'<span class="mnp-hero-title">今MNPするなら？</span>'
-            f'<span class="mnp-hero-sub">維持費と還元のバランスで選んだ乗り換えおすすめTOP5</span>'
+            f'<span class="mnp-hero-sub"><strong class="mnp-hero-mark">何度でも使えるキャンペーンだけ！</strong>維持費と還元のバランスで選んだ乗り換えおすすめTOP5</span>'
             f'<span class="mnp-hero-top">いま1位：{html.escape(top["carrier"])}「{html.escape(top["benefit"])}」'
             f'<span class="mnp-hero-date">{int(upd[5:7])}/{int(upd[8:10])}更新</span></span>'
             f'<span class="mnp-hero-cta">TOP5を見る →</span></a></div></div>')
@@ -716,9 +716,13 @@ def main():
         ranks.append(
             f'<section class="mnp-rank" id="rank{i}" style="--tbg:{bg};--tfg:{fg}">'
             f'<div class="mnp-rank-head"><span class="mnp-rank-no">{i}<small>位</small></span>'
-            f'<span class="mnp-rank-carrier">{html.escape(it["carrier"])}</span>'
+            f'<span class="mnp-rank-brand">{html.escape(it["carrier"])}</span>'
             f'<span class="tag">{html.escape(it.get("type", ""))}</span>{deadline_badge(it)}</div>'
-            f'<h2 class="mnp-rank-benefit">{html.escape(it["benefit"])}</h2>'
+            + (f'<figure class="mnp-rank-img"><img src="{html.escape(it["image"])}" alt="{html.escape(it["carrier"])}" '
+               f'loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">'
+               + (f'<figcaption>画像：{html.escape(it["image_credit"])}</figcaption>' if it.get("image_credit") else "")
+               + '</figure>' if it.get("image") else "")
+            + f'<h2 class="mnp-rank-benefit">{html.escape(it["benefit"])}</h2>'
             f'<p class="mnp-rank-name">{html.escape(it["name"])}</p>'
             f'<p>{inline(it.get("summary", ""))}</p>'
             + (f'<dl class="mnp-cost"><div><dt>対象プラン</dt><dd>{html.escape(it["plan"])}</dd></div>'
