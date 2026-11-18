@@ -457,3 +457,21 @@ th { background: var(--green-pale); }
   .mini-list .thumb-mini { width: 112px; }
   .mini-title { font-size: 14px; }
 }
+
+/* 「今MNPするなら？」おすすめTOP5 */
+.mnp-banner { display: block; margin: 0 0 20px; padding: 14px 16px; border: 2px solid var(--orange); background: var(--orange-pale); color: var(--text); text-decoration: none; border-radius: var(--radius); }
+.mnp-banner:hover { box-shadow: 0 4px 12px var(--shadow); }
+.mnp-banner-kicker { display: inline-block; font-size: 12px; font-weight: 700; color: var(--on-color); background: var(--orange); padding: 2px 8px; margin-bottom: 6px; }
+.mnp-banner-title { display: block; font-size: 20px; font-weight: 900; line-height: 1.4; }
+.mnp-banner-sub { display: block; margin-top: 4px; font-size: 14px; color: var(--orange-text); font-weight: 700; }
+.mnp-rank { margin: 0 0 24px; padding: 16px; border: 1px solid var(--line); border-left: 6px solid var(--tfg); background: var(--surface); }
+.mnp-rank-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mnp-rank-no { font-size: 30px; font-weight: 900; line-height: 1; color: var(--orange-text); }
+.mnp-rank-no small { font-size: 14px; margin-left: 2px; }
+.mnp-rank-carrier { font-weight: 700; padding: 3px 10px; background: var(--tbg); color: var(--tfg); }
+.article-body .mnp-rank-benefit, .mnp-rank-benefit { margin: 10px 0 2px; font-size: 22px; line-height: 1.4; border: 0; padding: 0; }
+.mnp-rank-name { margin: 0 0 8px; color: var(--muted); font-size: 14px; }
+.mnp-rank-for { font-weight: 700; color: var(--green); }
+.mnp-rank-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mnp-rank-carrier { background: var(--soft); } }
+:root[data-theme="dark"] .mnp-rank-carrier { background: var(--soft); }
