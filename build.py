@@ -27,6 +27,9 @@ GOOGLE_SITE_VERIFICATION = ""
 BING_SITE_VERIFICATION = ""
 # 開催中キャンペーンのまとめページ
 MATOME_PATH = "campaigns.html"
+# 「今MNPするなら？」おすすめTOP5の固定ページ（中身は mnp_top5.json）
+MNP_PATH = "mnp.html"
+MNP_TOP5 = json.loads((ROOT / "mnp_top5.json").read_text(encoding="utf-8"))
 
 # キャリアごとのサムネイル色（パステル）
 CARRIER_COLORS = {
@@ -465,6 +468,7 @@ def main():
         def cur(key):
             return ' class="is-current" aria-current="page"' if key == current else ""
         links = [f'<a href="{root}index.html"{cur("all")}>すべて</a>',
+                 f'<a href="{root}{MNP_PATH}"{cur("mnp")}>今MNPするなら？</a>',
                  f'<a href="{root}{MATOME_PATH}"{cur("matome")}>開催中まとめ</a>']
         links += [f'<a href="{root}carrier/{slug_of[c]}.html"{cur(c)}>{html.escape(c)}</a>' for c in carriers]
         return "".join(links)
@@ -565,7 +569,12 @@ def main():
 
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE_URL,
                "description": SITE_DESC, "inLanguage": "ja", "publisher": PUBLISHER}
-    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="",
+    top = MNP_TOP5["items"][0] if MNP_TOP5["items"] else None
+    mnp_banner = (f'<a class="mnp-banner" href="{MNP_PATH}"><span class="mnp-banner-kicker">固定記事</span>'
+                  f'<span class="mnp-banner-title">今MNPするなら？乗り換えおすすめTOP5</span>'
+                  f'<span class="mnp-banner-sub">いま1位は{html.escape(top["carrier"])}の「{html.escape(top["benefit"])}」'
+                  f'・{jp_date(MNP_TOP5["updated"])}更新 →</span></a>' if top else "")
+    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", "", mnp_banner), sidebar=sidebar(""), path="",
                  head=json_ld(site_ld))
     (OUT / "index.html").write_text(render(index, "", nav("", "all")), encoding="utf-8")
 
@@ -676,6 +685,54 @@ def main():
              head=json_ld(matome_ld))
     (OUT / MATOME_PATH).write_text(render(p, "", nav("", "matome")), encoding="utf-8")
 
+    # 「今MNPするなら？」おすすめTOP5（mnp_top5.json の順に1位〜5位）
+    slugs = {a["slug"] for a in articles}
+    upd = MNP_TOP5["updated"]
+    mnp_title = f"今MNPするなら？乗り換えおすすめTOP5【{int(upd[:4])}年{int(upd[5:7])}月】"
+    mnp_desc = ("いま他社から乗り換える（MNP）ならどこがおトク？キャッシュバック・ポイント還元・端末割引の"
+                "おすすめキャンペーンを5つに絞って毎日見直しています。")
+    ranks = []
+    for i, it in enumerate(MNP_TOP5["items"][:5], 1):
+        bg, fg = CARRIER_COLORS.get(it["carrier"], DEFAULT_COLOR)
+        lis = "".join(f"<li>{inline(x)}</li>" for x in it.get("points", []))
+        links = []
+        if it.get("article") in slugs:
+            links.append(f'<a href="articles/{it["article"]}.html">くわしい記事を読む →</a>')
+        if it.get("source"):
+            links.append(f'<a href="{html.escape(it["source"])}" target="_blank" rel="noopener">公式サイトで確認</a>')
+        aff = affiliate_for(it["carrier"])
+        ranks.append(
+            f'<section class="mnp-rank" id="rank{i}" style="--tbg:{bg};--tfg:{fg}">'
+            f'<div class="mnp-rank-head"><span class="mnp-rank-no">{i}<small>位</small></span>'
+            f'<span class="mnp-rank-carrier">{html.escape(it["carrier"])}</span>'
+            f'<span class="tag">{html.escape(it.get("type", ""))}</span>{deadline_badge(it)}</div>'
+            f'<h2 class="mnp-rank-benefit">{html.escape(it["benefit"])}</h2>'
+            f'<p class="mnp-rank-name">{html.escape(it["name"])}</p>'
+            f'<p>{inline(it.get("summary", ""))}</p>'
+            + (f'<ul>{lis}</ul>' if lis else "")
+            + (f'<p class="mnp-rank-for">こんな人におすすめ：{html.escape(it["for"])}</p>' if it.get("for") else "")
+            + f'<p class="period">期間：{html.escape(it.get("period") or "終了日未定")}</p>'
+            + f'<p class="mnp-rank-links">{"".join(links)}</p>'
+            + (cta_box(aff) if aff else "") + "</section>")
+    mnp_toc = "".join(f'<a href="#rank{i}">{i}位 {html.escape(it["carrier"])}</a>'
+                      for i, it in enumerate(MNP_TOP5["items"][:5], 1))
+    mnp_main = (f'<article class="article mnp-page"><h1 class="article-title">{mnp_title}</h1>'
+                f'<p class="article-meta"><time datetime="{upd}">{upd.replace("-", "/")} 更新</time></p>'
+                f'{PR_NOTE.format("本記事") if A8_LINKMGR_ID else ""}'
+                f'<p>{html.escape(mnp_desc)}もらえる金額の大きさと条件の手軽さで順位をつけています。'
+                '条件は変わることがあるので、申し込む前に必ず各社の公式サイトで確認してください。</p>'
+                f'<nav class="matome-toc">{mnp_toc}</nav>'
+                f'<div class="article-body">{"".join(ranks)}</div>'
+                f'<p class="related-more related-matome"><a href="{MATOME_PATH}">ほかの開催中キャンペーンもまとめて見る →</a></p>'
+                '</article>')
+    mnp_ld = {"@context": "https://schema.org", "@type": "ItemList", "name": mnp_title,
+              "itemListElement": [{"@type": "ListItem", "position": i + 1,
+                                   "name": f'{it["carrier"]} {it["benefit"]}'}
+                                  for i, it in enumerate(MNP_TOP5["items"][:5])]}
+    p = page(f"{mnp_title} | {SITE_NAME}", mnp_main, mnp_desc, sidebar(""), path=MNP_PATH,
+             head=json_ld(mnp_ld))
+    (OUT / MNP_PATH).write_text(render(p, "", nav("", "mnp")), encoding="utf-8")
+
     # RSS フィード（新しい20件）
     def rfc822(a):
         return datetime.fromisoformat(iso_time(a)).strftime("%a, %d %b %Y %H:%M:%S +0900")
@@ -699,12 +756,13 @@ def main():
     (OUT / "404.html").write_text(render(missing, "/", nav("/")), encoding="utf-8")
 
     # 検索エンジン向けのサイトマップと robots.txt
-    urls = ["", MATOME_PATH] + [f"articles/{a['slug']}.html" for a in articles]
+    urls = ["", MNP_PATH, MATOME_PATH] + [f"articles/{a['slug']}.html" for a in articles]
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
     urls += [f"{path.stem}.html" for path in sorted(PAGES.glob("*.md"))]
     latest = {f"articles/{a['slug']}.html": a.get("updated") or a["date"] for a in articles}
     latest[MATOME_PATH] = now.isoformat()
+    latest[MNP_PATH] = MNP_TOP5["updated"]
     entries = "".join(
         f"<url><loc>{page_url(u)}</loc><lastmod>{latest.get(u, articles[0]['date'] if articles else today().isoformat())}</lastmod></url>"
         for u in urls)
