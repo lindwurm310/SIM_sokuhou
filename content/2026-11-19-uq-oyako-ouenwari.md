@@ -9,6 +9,9 @@ x_intro: UQ mobileでも親子で1年間1100円引きが始まったよ。
 tags: MNP, SIMのみ
 period: 2026年11月19日〜
 source: https://newsroom.kddi.com/news/detail/kddi_nr-1244_4831.html
+image: https://newsroom.kddi.com/news/assets/2026/kddi_nr-1244_4831/kddi_nr-1244_4831_img_01.jpg
+image_credit: KDDI公式サイト
+image_size: 1200x630
 ---
 UQ mobileが**11月19日（木）**から「**UQ親子応援割**」を提供しています。ワイモバイルの「ワイモバ親子割」（11月18日開始）に続く、子どもと家族向けの割引です。
 

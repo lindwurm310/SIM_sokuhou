@@ -9,6 +9,9 @@ x_intro: あのINFOBARが通話専用ケータイで帰ってくるよ。
 tags: ガジェット
 period: 2026年12月25日 発売
 source: https://newsroom.kddi.com/news/detail/kddi_nr-1245_4832.html
+image: https://newsroom.kddi.com/news/assets/2026/kddi_nr-1245_4832/kddi_nr-1245_4832_img_01.jpg
+image_credit: KDDI公式サイト
+image_size: 1280x720
 ---
 KDDIが、デザインケータイ「INFOBAR」シリーズの新モデル「**INFOBAR ZERO**」を**12月25日（金）**に発売します。SIMフリーブランド「au Flex Style」初のオリジナルモデルで、いまは予約を受け付けています。
 
