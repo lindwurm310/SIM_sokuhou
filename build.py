@@ -434,8 +434,21 @@ function toggleTheme() {{
 </html>"""
 
 
+# サイト内リンク（相対パスか https://simsoku.com/ で始まるもの）の .html を外す。
+# Cloudflare は .html 付きURLを拡張子なしへ 307 で飛ばすので、内部リンクも canonical と同じ
+# 拡張子なしのURLにそろえ、Google が .html 版を「代替ページ」として拾わないようにする。
+INTERNAL_HTML_LINK = re.compile(r'href="((?:' + re.escape(SITE_URL) + r'|(?![a-zA-Z][a-zA-Z0-9+.-]*:|//))[^"#?]*?)\.html(?=[#?"])')
+
+
+def clean_link(m):
+    path = m.group(1)
+    if path == "index" or path.endswith("/index"):
+        path = path[:-5]
+    return f'href="{path or "./"}'
+
+
 def render(template, root, nav):
-    return template.replace("{root}", root).replace("{nav}", nav)
+    return INTERNAL_HTML_LINK.sub(clean_link, template.replace("{root}", root).replace("{nav}", nav))
 
 
 def x_recent_posts(articles, handle, limit=3):

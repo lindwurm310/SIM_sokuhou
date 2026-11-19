@@ -26,7 +26,7 @@
       esc(a.thumb || a.carrier) + "</span>" + img + "</div>";
   }
   function item(a, extra) {
-    return '<li class="side-item"><a href="' + root + "articles/" + a.slug + '.html">' + thumb(a) +
+    return '<li class="side-item"><a href="' + root + "articles/" + a.slug + '">' + thumb(a) +
       '<span class="side-text"><span class="side-carrier" style="--tbg:' + a.bg + ";--tfg:" + a.fg + '">' +
       esc(a.carrier) + "</span>" + esc(a.title) + (extra || "") + "</span></a></li>";
   }
