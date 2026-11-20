@@ -5,6 +5,7 @@ time: 08:00
 carrier: au
 thumb: 最大1万6500円引き 12/6まで
 lead: auが11月13日から「BLACK FRIDAY 2026」を始めました。auショップやau Online Shopなどで、Apple Watch Series 11が最大1万6500円引き、Apple Watch Series 12などが最大1万1000円引きになります。AirPods Pro 3やGoogle Pixel Watch 5の割引も同時に実施中。期間は12月6日まで。
+point: Apple WatchやAirPodsなどの周辺機器は、このようなセールのときに買うのがおすすめです。割引の条件が商品や購入場所で違うので、買う前に対象かどうか確かめましょう。
 x_intro: auのブラックフライデーでApple Watchが安くなってるよ。
 tags: ガジェット
 period: 2026年11月13日〜12月6日

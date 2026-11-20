@@ -6,6 +6,7 @@ time: 08:00
 carrier: 楽天モバイル
 thumb: iPad 2万円引き
 lead: 楽天モバイルが11月6日からiPad（A16）、iPad mini（A20 Pro）、iPad Air（M4）、iPad Pro（M5）を販売しています。新規契約か乗り換え（MNP）と同時に一括または24回払いで買うと本体が2万円引き。iPad（A16）128GBは楽天カードの48回払いなら1〜24回目が月1990円です。終了日は未定です。
+point: iPadを回線とセットで買うと割引が受けられますが、データ通信の回線も毎月かかります。Wi-Fiだけで使う予定の人は、Wi-Fiモデルの価格とも比べてみましょう。
 tags: MNP, 端末割引, ポイント還元
 period: 2026年11月6日 8:00〜（終了日未定）
 source: https://network.mobile.rakuten.co.jp/campaign/ipad-discount/

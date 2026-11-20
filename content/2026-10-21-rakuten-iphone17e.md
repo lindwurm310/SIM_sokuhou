@@ -6,6 +6,7 @@ time: 20:00
 carrier: 楽天モバイル
 thumb: iPhone 17e 実質24円
 lead: 楽天モバイルでは他社からの乗り換えと同時にiPhone 17e（256GB）を48回払いで買うと、24カ月間の支払いが月1円・合計24円になります。25カ月目に端末を返す条件があるので、仕組みを整理しました。
+point: 総額24円は25カ月目に端末を返すことが前提です。返さずに使い続けると残りの分割代金がかかるので、2年ごとに機種を替える人向けの買い方と考えるのがおすすめです。
 tags: MNP, iPhone, 端末割引, 返却プログラム
 period: 終了日未定（公式サイトで要確認）
 image: https://network.mobile.rakuten.co.jp/assets/img/campaign/iphone-discount/ogp-260925.png

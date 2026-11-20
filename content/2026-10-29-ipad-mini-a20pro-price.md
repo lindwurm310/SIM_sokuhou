@@ -6,6 +6,7 @@ time: 12:00
 carrier: au
 thumb: iPad mini 実質8.3万円〜
 lead: 有機ELになった新しい「iPad mini（A20 Pro）」が11月6日に発売されます。ドコモ・au・ソフトバンクは10月29日に予約受付を始めました。Wi-Fi＋Cellularモデルの128GBは、auが16万8800円、ソフトバンクが18万720円。返却プログラムを使うと、実質負担はauが8万7800円、ソフトバンクが8万3760円です。
+point: キャリアで買うと定価は高めでも、返却プログラムを使うと実質負担はぐっと下がります。長く使いたい人は、返却しない場合の総額とSIMフリー版も比べてみましょう。
 tags: 返却プログラム
 period: 2026年10月29日 予約開始、11月6日発売
 source: https://newsroom.kddi.com/news/detail/kddi_nr-1219_4789.html

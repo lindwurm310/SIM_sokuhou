@@ -6,6 +6,7 @@ time: 08:00
 carrier: 楽天モバイル
 thumb: edge 70 fusion 実質4.89万円
 lead: 楽天モバイルが10月23日に「motorola edge 70 fusion」を発売しました。一括価格は6万4900円ですが、初めての申し込みで他社から乗り換えると最大1万6000ポイントが還元され、実質4万8900円で買えます。
+point: 還元は「初めての申し込み」が条件で、過去に楽天モバイルを使った人は対象外になりやすい点に注意です。ポイントは後からの付与なので、実質価格は受け取るまでを含めて考えましょう。
 tags: MNP, 端末割引, Android, ポイント還元
 period: 終了日未定（公式サイトで要確認）
 image: https://network.mobile.rakuten.co.jp/assets/img/product/motorola-edge-70-fusion/ogp.png

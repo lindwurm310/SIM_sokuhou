@@ -6,6 +6,7 @@ time: 07:00
 carrier: U-NEXT MOBILE
 thumb: 計1800pt＝実質6カ月無料
 lead: U-NEXT MOBILEが1周年記念キャンペーンの第1弾を10月23日10時から始めます。期間中に新しく使い始めると、U-NEXTポイントが毎月300ポイントずつ6カ月、合計1800ポイントもらえます。
+point: U-NEXTのポイントは動画の購入などに使えるので、もともとU-NEXTを見ている人ほどうれしい特典です。6カ月に分けての付与なので、途中で解約すると受け取れない分が出ます。
 tags: ポイント還元
 period: 2026年10月23日 10:00〜終了日未定
 image: https://images.prismic.io/unextmobile/TByXrBJcMhtMhGj9_Topic%E8%A8%98%E4%BA%8B%E7%94%A8%E7%94%BB%E5%83%8F_960%C3%97540.jpg?auto=format,compress

@@ -6,6 +6,7 @@ time: 12:00
 carrier: UQ mobile
 thumb: Apple One 2カ月無料
 lead: UQ mobileが11月1日から、UQ mobileで申し込んだApple One（個人プラン・月1350円）を初回加入なら2カ月間無料にしました。Apple Music・Apple TV・Apple Arcade・iCloud+（50GB）をまとめたセットで、別々に入るより月2110円安くなります。終了日は決まっていません。
+point: Apple MusicやiCloud+などを別々に払っている人は、まとめるだけで月額が下がります。無料期間のあとは自動で有料になるので、使い続けるかを期間中に決めましょう。
 tags: iPhone
 period: 2026年11月1日〜終了日未定
 image: https://www.uqwimax.jp/common2/images/ogp.png

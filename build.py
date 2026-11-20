@@ -10,6 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
 PAGES = ROOT / "pages"
+# 解説ガイド（guides/<slug>.md → /guide/<slug>）。キャンペーン記事とは別の、時期を問わず役立つ読みもの
+GUIDES = ROOT / "guides"
 OUT = ROOT / "docs"
 SITE_NAME = "SIMトク速報"
 SITE_URL = "https://simsoku.com/"
@@ -48,6 +50,7 @@ CARRIER_COLORS = {
     "Amazon": ("#e3f4ff", "#1f6f9e"),
     "セキュリティ": ("#ffe9e0", "#b23c17"),
     "ゲオモバイル": ("#dfe7ff", "#1f3f99"),
+    "OPPO": ("#dff5e6", "#1d7a43"),
 }
 JST = timezone(timedelta(hours=9))
 
@@ -62,6 +65,38 @@ ADSENSE_CLIENT = "ca-pub-2086077839254292"
 # フッターに並べる固定ページ（pages/<slug>.md から生成）
 FOOTER_PAGES = [("about", "運営者情報"), ("privacy", "プライバシーポリシー"),
                 ("ad-policy", "広告掲載について"), ("contact", "お問い合わせ")]
+
+# キャリア別ページの冒頭に出す紹介文（どんな会社・ブランドか）。料金など変わりやすい数字は書かない。
+CARRIER_INFO = {
+    "ドコモ": "NTTドコモの大手キャリアブランドです。全国の店舗で相談でき、端末の割引（5G WELCOME割など）やdポイントのキャンペーンが中心です。",
+    "ahamo": "ドコモのオンライン専用プランです。申し込みやサポートはオンラインが中心で、そのぶん料金を抑えています。ドコモの回線をそのまま使えます。",
+    "au": "KDDIの大手キャリアブランドです。端末の割引や返却プログラム、Pontaポイントの還元、周辺機器のセールなどのキャンペーンがよく行われます。",
+    "UQ mobile": "KDDIのサブブランドです。auの回線を使いながら料金を抑えていて、店舗でも相談できます。家族や光回線とのセット割が充実しています。",
+    "povo": "KDDIのオンライン専用プランです。基本料0円から、必要なデータや通話を「トッピング」で買い足す仕組みで、使い方に合わせて料金を調整できます。",
+    "ソフトバンク": "ソフトバンクの大手キャリアブランドです。iPhoneなどの端末割引や返却プログラム、PayPayポイントがもらえるキャンペーンが多いのが特徴です。",
+    "ワイモバイル": "ソフトバンクのサブブランドです。ソフトバンクの回線を使いながら料金を抑えていて、店舗でも相談できます。PayPayポイントの特典がよく行われます。",
+    "LINEMO": "ソフトバンクのオンライン専用プランです。申し込みはオンラインで、乗り換えでPayPayポイントがもらえるキャンペーンがほぼ毎月のように行われています。",
+    "楽天モバイル": "楽天グループの携帯キャリアです。データ使用量に応じて料金が決まるプランが1つだけのシンプルな料金体系で、楽天ポイントの還元が大きいキャンペーンが中心です。",
+    "U-NEXT MOBILE": "動画配信サービスU-NEXTが提供する格安SIMです。U-NEXTの見放題とセットのプランなど、動画をよく見る人向けのプランがあります。",
+    "IIJmio": "インターネットイニシアティブ（IIJ）の格安SIMです。月額料金の安さに加え、乗り換えと同時に端末が安く買えるセールを頻繁に行っています。",
+    "mineo": "オプテージが提供する格安SIMです。ドコモ・au・ソフトバンクの回線から選べ、速度を抑えたデータ使い放題などのユニークなサービスがあります。",
+    "Amazon": "携帯会社ではなく、AmazonのAIアシスタントやスマートスピーカーなど、スマホと一緒に使うサービス・機器の話題をまとめています。",
+    "セキュリティ": "SIMスワップ詐欺や個人情報の流出など、スマホの利用者が気をつけたい情報と、その対策をまとめています。",
+    "ゲオモバイル": "中古スマホ・タブレットの販売店です。格安SIMとのセットや乗り換えで中古端末が安く買えることがあります。",
+    "OPPO": "中国のスマホメーカーです。SIMフリー版のほか、各社の格安SIMやキャリアでも端末を扱っています。新機種の発売情報をまとめています。",
+}
+# カテゴリページの冒頭に出す説明
+CATEGORY_INTRO = {
+    "mnp": "いまの電話番号のまま他社へ乗り換える（MNP）ともらえる特典の記事です。乗り換えの手順は[はじめての乗り換え（MNP）ガイド](https://simsoku.com/guide/mnp-howto.html)にまとめています。",
+    "device": "スマホやタブレットが安く買えるキャンペーンの記事です。「実質◯円」は端末の返却が前提のことが多いので、返さない場合の総額もあわせて確かめましょう。",
+    "fee": "契約時の事務手数料（多くは3850円）が無料になるキャンペーンの記事です。ほかの特典と併用できるかもあわせて紹介しています。",
+    "point": "ポイントや電子マネー、キャッシュバックがもらえるキャンペーンの記事です。付与の時期や有効期限にも注目してください。",
+    "simonly": "端末はそのままでSIMだけを替える人向けの特典の記事です。いまのスマホが乗り換え先の回線で使えるかを先に確かめると安心です。",
+    "gadget": "AIアシスタントやスマートスピーカー、XRグラスなど、スマホと一緒に使うサービス・機器の記事です。",
+    "security": "SIMスワップ詐欺や通信障害、個人情報の漏えいなど、スマホの利用者が知っておきたい注意情報の記事です。",
+}
+# 終了してからこの日数を過ぎた記事は検索結果に出さない（noindex）。ページは残してリンクも生かす
+ENDED_NOINDEX_DAYS = 90
 
 # サイドバーのカテゴリ。記事の tags のどれかが含まれていればそのカテゴリに入る。
 CATEGORIES = [
@@ -90,6 +125,7 @@ CARRIER_SLUGS = {
     "Amazon": "amazon",
     "セキュリティ": "security",
     "ゲオモバイル": "geomobile",
+    "OPPO": "oppo",
 }
 
 
@@ -356,7 +392,8 @@ def mnp_banner(path):
             f'<span class="mnp-hero-cta">TOP5を見る →</span></a></div></div>')
 
 
-def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head="", image_size=("1200", "630")):
+def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head="", image_size=("1200", "630"),
+         noindex=False):
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -366,6 +403,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
 <title>{html.escape(title)}</title>
 <meta name="description" content="{html.escape(description)}">
 <link rel="canonical" href="{page_url(path)}">
+{'<meta name="robots" content="noindex">' if noindex else ""}
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(description)}">
@@ -416,7 +454,7 @@ def page(title, main, description=SITE_DESC, sidebar="", path="", image="", head
 </div>
 <footer class="site-footer"><div class="wrap">
   <p>掲載内容は記事公開時点の情報です。最新の条件は必ず各社公式サイトでご確認ください。</p>
-  <p class="footer-links">{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}<a href="{SITE_URL}feed.xml">RSS</a></p>
+  <p class="footer-links"><a href="{{root}}guide/index.html">はじめての方へ</a>{"".join(f'<a href="{{root}}{slug}.html">{name}</a>' for slug, name in FOOTER_PAGES)}<a href="{SITE_URL}feed.xml">RSS</a></p>
   <p>&copy; {today().year} {SITE_NAME}</p>
 </div></footer>
 <script>
@@ -471,6 +509,7 @@ def main():
     (OUT / "articles").mkdir(parents=True)
     (OUT / "carrier").mkdir()
     (OUT / "category").mkdir()
+    (OUT / "guide").mkdir()
     shutil.copytree(ROOT / "static", OUT / "static")
 
     articles = []
@@ -499,7 +538,8 @@ def main():
             return ' class="is-current" aria-current="page"' if key == current else ""
         links = [f'<a href="{root}index.html"{cur("all")}>すべて</a>',
                  f'<a href="{root}{MNP_PATH}"{cur("mnp")}>今MNPするなら？</a>',
-                 f'<a href="{root}{MATOME_PATH}"{cur("matome")}>開催中まとめ</a>']
+                 f'<a href="{root}{MATOME_PATH}"{cur("matome")}>開催中まとめ</a>',
+                 f'<a href="{root}guide/index.html"{cur("guide")}>はじめての方へ</a>']
         links += [f'<a href="{root}carrier/{slug_of[c]}.html"{cur(c)}>{html.escape(c)}</a>' for c in carriers]
         return "".join(links)
 
@@ -599,14 +639,27 @@ def main():
 
     site_ld = {"@context": "https://schema.org", "@type": "WebSite", "name": SITE_NAME, "url": SITE_URL,
                "description": SITE_DESC, "inLanguage": "ja", "publisher": PUBLISHER}
-    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", ""), sidebar=sidebar(""), path="",
+    open_count = sum(is_open(a) for a in articles)
+    home_intro = (
+        '<section class="site-intro"><p><strong>SIMトク速報</strong>は、ドコモ・au・ソフトバンク・楽天モバイルと、'
+        'そのサブブランド・オンライン専用プラン・格安SIMのキャンペーンを毎日チェックして、'
+        '対象になる人・受け取り方・終了日・注意点をわかりやすく整理するサイトです。'
+        f'いま開催中のキャンペーンは<strong>{open_count}件</strong>です。</p>'
+        '<ul class="intro-links">'
+        f'<li><a href="{MNP_PATH}">今MNPするなら？おすすめTOP5</a><span>1年間の実質負担が安い順</span></li>'
+        f'<li><a href="{MATOME_PATH}">開催中まとめ</a><span>キャリア別・終了日順の一覧</span></li>'
+        '<li><a href="guide/campaign-checklist.html">損しないための7つのチェックポイント</a><span>申し込む前に確認</span></li>'
+        '<li><a href="guide/mnp-howto.html">はじめての乗り換え（MNP）ガイド</a><span>準備から開通まで</span></li>'
+        '</ul></section>')
+    index = page(SITE_NAME, list_main(articles, "新着キャンペーン", "", home_intro), sidebar=sidebar(""), path="",
                  head=json_ld(site_ld))
     (OUT / "index.html").write_text(render(index, "", nav("", "all")), encoding="utf-8")
 
     for c in carriers:
         items = [a for a in articles if a["carrier"] == c]
         aff = affiliate_for(c)
-        intro = PR_NOTE.format("このページ") + cta_box(aff) if aff else ""
+        intro = (f'<p class="list-intro">{html.escape(CARRIER_INFO[c])}</p>' if c in CARRIER_INFO else "")
+        intro += PR_NOTE.format("このページ") + cta_box(aff) if aff else ""
         p = page(f"{c}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(c)}のキャンペーン", "../", intro),
                  sidebar=sidebar("../"), path=f"carrier/{slug_of[c]}.html")
         (OUT / "carrier" / f"{slug_of[c]}.html").write_text(render(p, "../", nav("../", c)), encoding="utf-8")
@@ -615,7 +668,8 @@ def main():
         items = in_category(tags)
         if not items:
             continue
-        p = page(f"{name}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(name)}のキャンペーン", "../"),
+        intro = f'<p class="list-intro">{inline(CATEGORY_INTRO[slug])}</p>' if slug in CATEGORY_INTRO else ""
+        p = page(f"{name}のキャンペーン | {SITE_NAME}", list_main(items, f"{html.escape(name)}のキャンペーン", "../", intro),
                  sidebar=sidebar("../"), path=f"category/{slug}.html")
         (OUT / "category" / f"{slug}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
@@ -627,15 +681,24 @@ def main():
         credit = (f'<p class="credit">画像：{html.escape(a["image_credit"])}</p>'
                   if a.get("image") and a.get("image_credit") else "")
         aff = affiliate_for(a["carrier"], a)
+        ended_days = (today() - date.fromisoformat(a["end"])).days if a.get("end") else -1
+        ended = (f'<div class="ended-note">このキャンペーンは{jp_date(a["end"])}に終了しました。'
+                 f'いま開催中のものは<a href="../{MATOME_PATH}">開催中まとめ</a>や'
+                 f'<a href="../carrier/{slug_of[a["carrier"]]}.html">{html.escape(a["carrier"])}の記事一覧</a>をご覧ください。</div>'
+                 if ended_days > 0 else "")
+        point = (f'<aside class="editor-point"><h2>SIMトク速報のひとこと</h2><p>{inline(a["point"])}</p></aside>'
+                 if a.get("point") else "")
         main_html = f"""<article class="article">
   <p class="article-meta"><time>{a['date'].replace('-', '/')} {a.get('time', '')}</time>{deadline_badge(a)}</p>
   <h1 class="article-title">{html.escape(a['title'])}</h1>
   {PR_NOTE.format("本記事") if aff or A8_LINKMGR_ID else ""}
   <p class="card-tags">{tags}</p>
+  {ended}
   {thumb(a).replace('class="thumb"', 'class="thumb thumb-large"')}
   {credit}
   {period}
   <div class="article-body">{a['body']}</div>
+  {point}
   {cta_box(aff) if aff else ""}
   {source}
   {related_html(a)}
@@ -658,7 +721,7 @@ def main():
         card, cw, ch = card_image(a)
         p = page(f"{seo_title(a)} | {SITE_NAME}", main_html, a["lead"], sidebar("../"),
                  path=f"articles/{a['slug']}.html", image=card, head=json_ld(article_ld, crumb_ld),
-                 image_size=(cw, ch))
+                 image_size=(cw, ch), noindex=ended_days > ENDED_NOINDEX_DAYS)
         (OUT / "articles" / f"{a['slug']}.html").write_text(render(p, "../", nav("../")), encoding="utf-8")
 
     for path in sorted(PAGES.glob("*.md")):
@@ -668,6 +731,38 @@ def main():
         p = page(f"{meta['title']} | {SITE_NAME}", main_html, meta.get("description", SITE_DESC),
                  sidebar(""), path=f"{path.stem}.html")
         (OUT / f"{path.stem}.html").write_text(render(p, "", nav("")), encoding="utf-8")
+
+    # 解説ガイド（/guide/<slug>）と一覧（/guide/）
+    guides = []
+    for path in GUIDES.glob("*.md"):
+        meta, body = parse_front_matter(path.read_text(encoding="utf-8"))
+        meta["slug"], meta["body"] = path.stem, body
+        guides.append(meta)
+    guides.sort(key=lambda g: int(g.get("order", 99)))
+    for g in guides:
+        main_html = (f'<article class="article static-page guide"><p class="article-meta">はじめての方へ（ガイド）</p>'
+                     f'<h1 class="article-title">{html.escape(g["title"])}</h1>'
+                     f'<p class="lead">{html.escape(g["description"])}</p>'
+                     f'<div class="article-body">{markdown_to_html(g["body"])}</div>'
+                     f'<p class="back"><a href="index.html">← ガイドの一覧へ</a></p></article>')
+        g_ld = {"@context": "https://schema.org", "@type": "Article", "headline": g["title"],
+                "description": g["description"], "inLanguage": "ja", "publisher": PUBLISHER,
+                "author": {"@type": "Organization", "name": f"{SITE_NAME}編集部", "url": page_url("about")},
+                "mainEntityOfPage": page_url(f"guide/{g['slug']}")}
+        p = page(f"{g['title']} | {SITE_NAME}", main_html, g["description"], sidebar("../"),
+                 path=f"guide/{g['slug']}.html", head=json_ld(g_ld))
+        (OUT / "guide" / f"{g['slug']}.html").write_text(render(p, "../", nav("../", "guide")), encoding="utf-8")
+    guide_items = "".join(f'<li><a href="{g["slug"]}.html"><strong>{html.escape(g["title"])}</strong>'
+                          f'<span>{html.escape(g["description"])}</span></a></li>' for g in guides)
+    guide_main = ('<article class="article static-page"><h1 class="article-title">はじめての方へ</h1>'
+                  '<p>携帯のキャンペーンを上手に使うための基本を、SIMトク速報編集部がまとめました。'
+                  '記事を読む前に、まずはここから目を通してみてください。</p>'
+                  f'<ul class="guide-list">{guide_items}</ul>'
+                  '<p>当サイトの方針や記事の作り方は<a href="../about.html">運営者情報</a>をご覧ください。</p></article>')
+    p = page(f"はじめての方へ（ガイド） | {SITE_NAME}", guide_main,
+             "携帯キャンペーンで損しないためのチェックポイントや、乗り換え（MNP）の手順など、SIMトク速報のガイド一覧です。",
+             sidebar("../"), path="guide/index.html")
+    (OUT / "guide" / "index.html").write_text(render(p, "../", nav("../", "guide")), encoding="utf-8")
 
     # 開催中キャンペーンのまとめ（毎日の再ビルドで中身と日付が更新される）
     now = today()
@@ -797,6 +892,10 @@ def main():
     urls += [f"carrier/{slug_of[c]}.html" for c in carriers]
     urls += [f"category/{slug}.html" for slug, _, tags in CATEGORIES if in_category(tags)]
     urls += [f"{path.stem}.html" for path in sorted(PAGES.glob("*.md"))]
+    urls += ["guide/index.html"] + [f"guide/{g['slug']}.html" for g in guides]
+    urls = [u for u in urls if not (u.startswith("articles/") and next(
+        (a for a in articles if f"articles/{a['slug']}.html" == u and a.get("end")
+         and (today() - date.fromisoformat(a["end"])).days > ENDED_NOINDEX_DAYS), None))]
     latest = {f"articles/{a['slug']}.html": a.get("updated") or a["date"] for a in articles}
     latest[MATOME_PATH] = now.isoformat()
     latest[MNP_PATH] = MNP_TOP5["updated"]
