@@ -6,6 +6,7 @@ time: 12:10
 carrier: au
 thumb: 予約で2.99万P還元
 lead: auは、Googleの「Android XR」を国内で初めて搭載したメガネ型デバイス「XREAL AURA」を、au +1 collectionとして11月27日にau Online Shopで発売します。11月26日までに予約して購入を終えると、2万9900円相当のPontaポイントが還元されます。予約はau／UQ mobileの回線契約が紐づいたau IDが必要です。
+point: ポイント還元を受けるには、予約期間中に購入まで終えることが条件です。回線契約が紐づいたau IDが必要なので、auやUQ mobileを使っていない人は対象になりません。
 tags: ガジェット, ポイント還元
 period: 予約期間 2026年11月2日14時〜11月26日23時59分
 end: 2026-11-26

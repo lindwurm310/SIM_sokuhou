@@ -6,6 +6,7 @@ time: 18:00
 carrier: ahamo
 thumb: 最大4.4万円引き
 lead: ドコモの「5G WELCOME割」とahamoの端末セット割引で、他社から乗り換えるとiPhone 17eやPixel 10aが最大4万4000円安くなります。ahamoはSIMだけの乗り換えでも最大2万ポイント相当がもらえます。
+point: 端末を買い替えるならドコモの割引、SIMだけ替えるならahamoのポイントと、目的で選ぶ窓口が変わります。ahamoは店頭サポートがないオンライン専用プランなので、手続きを自分でできるかも確かめましょう。
 tags: MNP, 端末割引, iPhone, ポイント還元
 period: 終了日未定（公式サイトで要確認）
 image: https://cache.cil.ahamo.com/common/images/img_ogp.png
