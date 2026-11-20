@@ -12,9 +12,9 @@ SIMトク速報は、携帯各社の期間限定キャンペーンを毎日チ�
 |---|---|
 | サイト名 | SIMトク速報 |
 | URL | https://simsoku.com/ |
-| 運営者 | SIMトク速報 編集部 |
+| 運営者 | Mochi（SIMトク速報 編集部） |
 | 開設 | 2026年10月 |
-| 連絡先 | [お問い合わせ](https://simsoku.com/contact.html) |
+| 連絡先 | contact@simsoku.com（[お問い合わせ](https://simsoku.com/contact.html)） |
 | 公式X | [@simsokuho](https://x.com/simsokuho) |
 
 ## 当サイトでできること
