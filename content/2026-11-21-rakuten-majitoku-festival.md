@@ -10,6 +10,9 @@ tags: MNP, SIMのみ, ポイント還元
 period: 2026年11月20日 10:00〜12月21日 10:00
 end: 2026-12-21
 source: https://network.mobile.rakuten.co.jp/campaign/card-mobile-majitoku/
+image: https://network.mobile.rakuten.co.jp/assets/img/campaign/card-mobile-majitoku/img-ogp_260619.png
+image_credit: 楽天公式サイト
+image_size: 1200x630
 ---
 楽天モバイルと楽天カードの共同キャンペーン「**楽天マジ得フェスティバル**」が**11月20日10時〜12月21日10時**の期間で開催されています。
 
