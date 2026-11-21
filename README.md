@@ -34,6 +34,7 @@
 - 開催中まとめ：`campaigns.html` に、開催中のキャンペーン（終了日が今日以降、終了日がなければ公開から45日以内）をキャリア別・終了日順の表にまとめます。毎日の再ビルドで中身とタイトルの年月が更新されます。ナビの「開催中まとめ」からリンクしています。
 - RSS：`feed.xml` に新しい20件を配信します（各ページの `<head>` とフッターにリンク）。
 - アクセス解析・所有確認：`build.py` の `CF_BEACON_TOKEN`（Cloudflare Web Analytics のトークン）、`GOOGLE_SITE_VERIFICATION`（Search Console の HTML タグの値）、`BING_SITE_VERIFICATION` に値を入れると全ページにタグが入ります。空なら何も出しません。Search Console は DNS（Cloudflare）で確認してもかまいません。確認後、サイトマップ `https://simsoku.com/sitemap.xml` を送信します。
+- IndexNow（Bing などへの即時通知）：`build.py` の `INDEXNOW_KEY` から `/<キー>.txt` を出力し、記事・ガイド・`mnp_top5.json` を `main` に push すると GitHub Actions（`.github/workflows/indexnow.yml`）が公開を待って、その記事とトップ・開催中まとめ・MNPページのURLを通知します（`scripts/indexnow.py`）。Actions の画面から手動で実行するとサイトマップの全URLを通知します。
 - 終了前日のリマインド：GitHub Actions（`.github/workflows/ending-reminder.yml`）が毎日18時（日本時間）に、翌日終わる記事の「明日まで」投稿文（`scripts/ending_soon.py`）を「Xで投稿する」リンク付きの Issue にします。`python3 scripts/ending_soon.py 1` で手元でも確認できます。
 - A8.net のリンクマネージャー：`build.py` の `A8_LINKMGR_ID` に設定IDを入れると全ページで読み込み、提携中の広告主の公式サイトへのリンクを自動で広告リンクに置き換えます。有効な間は全記事のタイトル下に「本記事にはプロモーションが含まれます」を出します（空にすると止まります）。
 - Google AdSense：`build.py` の `ADSENSE_CLIENT` にサイト運営者ID（ca-pub-…）を入れると、全ページの `<head>` にAdSenseのコードが入り、`ads.txt` も出力します（空にすると止まります）。

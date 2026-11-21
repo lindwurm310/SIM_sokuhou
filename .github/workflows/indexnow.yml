@@ -1,0 +1,38 @@
+name: Notify search engines (IndexNow)
+
+# 記事やガイドを main に push したら、公開を待って Bing などに新しいURLを知らせる（scripts/indexnow.py）
+on:
+  push:
+    branches: [main]
+    paths: ["content/*.md", "guides/*.md", "mnp_top5.json"]
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "サイトマップの全URLを通知する"
+        type: boolean
+        default: true
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Notify
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.all }}" = "true" ]; then
+            python3 scripts/indexnow.py --all
+            exit 0
+          fi
+          changed=""
+          if [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            changed=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'content/*.md' 'guides/*.md')
+          fi
+          python3 scripts/indexnow.py $changed

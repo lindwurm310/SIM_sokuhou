@@ -25,6 +25,9 @@ X_URL = "https://x.com/simsokuho"
 CF_BEACON_TOKEN = "16f289ad429344ba9e167968f1fd3a9a"
 # Google Search Console の「HTML タグ」で所有確認するときの content の値（DNS で確認するなら空のままでよい）
 GOOGLE_SITE_VERIFICATION = ""
+# IndexNow（Bing・Yandex などに更新を即時通知する仕組み）のキー。/<キー>.txt を出力し、
+# GitHub Actions（.github/workflows/indexnow.yml）が記事の公開時に scripts/indexnow.py で通知する。空なら出さない。
+INDEXNOW_KEY = "1d52b649710540469bb391c544d5355b"
 # Bing Webmaster Tools の所有確認（msvalidate.01 の content の値）
 BING_SITE_VERIFICATION = ""
 # 開催中キャンペーンのまとめページ
@@ -908,6 +911,8 @@ def main():
     if ADSENSE_CLIENT:
         pub = ADSENSE_CLIENT.removeprefix("ca-")
         (OUT / "ads.txt").write_text(f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n", encoding="utf-8")
+    if INDEXNOW_KEY:
+        (OUT / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY, encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n", encoding="utf-8")
 
     print(f"{len(articles)} 本の記事を docs/ に出力しました")
