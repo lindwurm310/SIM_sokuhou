@@ -1,6 +1,6 @@
 {
   "_説明": "「今MNPするなら？」ページ（mnp.html）のおすすめTOP5。items の並び順がそのまま1位〜5位。選び方：①過去にその会社を使った人・同じ特典を受けた人・一定期間内に特典を使った人が対象外になるキャンペーンは載せない（1回線1回限りはOK）。②還元額だけでなく、1年間使ったときの実質負担（月額料金−割引−還元）が安く、還元とのバランスがよい順に並べる。cost_year は代表プランを1年使ったときの実質負担（税込・通話料や事務手数料は除く）。数字は各社公式ページで確認したものだけを書く。 image には各社公式ページの og:image（なければ公式サイト共通の画像）のURLを、image_credit に出典を入れる。",
-  "updated": "2026-11-18",
+  "updated": "2026-11-23",
   "items": [
     {
       "carrier": "IIJmio",
@@ -46,28 +46,6 @@
       "article": "2026-11-02-mineo-pittari-oppo",
       "image": "https://mineo.jp/asset/img/mineo_ogp_v2.png",
       "image_credit": "mineo公式サイト"
-    },
-    {
-      "carrier": "LINEMO",
-      "name": "ベストプランV基本料2カ月0円キャンペーン",
-      "benefit": "30GB＋5分かけ放題が2カ月0円",
-      "type": "SIMのみ",
-      "plan": "LINEMOベストプランV（30GB・5分以内の国内通話かけ放題）",
-      "monthly": "0円×2カ月 → 以降2,970円",
-      "cost_year": 29700,
-      "summary": "11月22日までにベストプランVを申し込むと、開通月の翌月から2カ月間の基本料が0円。5分以内の国内通話がかけ放題つきなので、電話をよく使う人はこの中で一番おトクです。",
-      "points": [
-        "11月22日までにベストプランVを申し込み、翌月末までに開通",
-        "割引は1回線1回まで。開通月の基本料は日割りでかかる",
-        "PayPayポイントの乗り換え特典は、過去にLINEMOを使ったことがある人は対象外のため、ここでは計算に入れていません"
-      ],
-      "for": "30GBと短い電話をよく使う人",
-      "end": "2026-11-22",
-      "period": "2026年11月16日〜11月22日",
-      "source": "https://www.linemo.jp/campaign/syukakusai/202611/1116/",
-      "article": "2026-11-16-linemo-bestplanv-2months-free",
-      "image": "https://www.linemo.jp/campaign/syukakusai/202611/1116/img/ogp.png",
-      "image_credit": "LINEMO公式サイト"
     },
     {
       "carrier": "ワイモバイル",
