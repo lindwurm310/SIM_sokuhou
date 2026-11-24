@@ -13,6 +13,7 @@ end: 2026-12-06
 image: https://www.linemo.jp/assets/images/ogp/info.png
 image_credit: LINEMO公式サイト
 source: https://k-tai.watch.impress.co.jp/docs/news/2158814.html
+image_size: 1200x630
 ---
 ソフトバンクのオンライン専用ブランドLINEMOで、「5周年大週穫祭」の**11月第4弾**が始まりました。今回は**PayPayポイントの増額**と**契約事務手数料0円**の2本立てで、期間は**12月6日まで**です。
 
