@@ -12,6 +12,7 @@ period: 2026年11月25日20時ごろ〜
 image: https://www.paypay-card.co.jp/company/common/images/ogp.png
 image_credit: PayPayカード公式サイト
 source: https://www.paypay-card.co.jp/info/011634.html
+image_check: ng
 ---
 11月25日（水）の夜から、PayPayのクレジット関連の機能が使えなくなっています。
 
